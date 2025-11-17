@@ -6,7 +6,7 @@ class RecipeProvider with ChangeNotifier {
   final RecipeRepository _recipeRepository = RecipeRepository();
 
   List<RecipeModel> _recipes = [];
-  List<RecipeModel> _favoriteRecipes = [];
+  final List<RecipeModel> _favoriteRecipes = [];
   RecipeModel? _selectedRecipe;
   bool _isLoading = false;
   String? _errorMessage;

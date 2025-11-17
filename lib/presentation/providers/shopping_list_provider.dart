@@ -192,10 +192,11 @@ class ShoppingListProvider with ChangeNotifier {
 
     final Map<String, List<ShoppingItem>> itemsByCategory = {};
     for (final item in list.items) {
-      if (!itemsByCategory.containsKey(item.category)) {
-        itemsByCategory[item.category] = [];
+      final category = item.category ?? 'Uncategorized';
+      if (!itemsByCategory.containsKey(category)) {
+        itemsByCategory[category] = [];
       }
-      itemsByCategory[item.category]!.add(item);
+      itemsByCategory[category]!.add(item);
     }
 
     return itemsByCategory;

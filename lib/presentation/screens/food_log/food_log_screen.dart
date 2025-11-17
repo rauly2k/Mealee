@@ -276,8 +276,8 @@ class _FoodLogScreenState extends State<FoodLogScreen> {
 
     if (log.recipeId != null) {
       displayName = log.recipeName ?? 'Rețetă';
-      if (log.portionMultiplier != null && log.portionMultiplier != 1.0) {
-        details = 'Porții: ${log.portionMultiplier!.toStringAsFixed(1)}x';
+      if (log.portionMultiplier != 1.0) {
+        details = 'Porții: ${log.portionMultiplier.toStringAsFixed(1)}x';
       }
     } else if (log.manualEntry != null) {
       displayName = log.manualEntry!.foodName;

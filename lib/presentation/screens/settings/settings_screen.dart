@@ -42,11 +42,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() => _darkModeEnabled = value);
 
     // TODO: Implement dark mode toggle in theme
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Modul întunecat va fi implementat în viitoarea versiune'),
-      ),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Modul întunecat va fi implementat în viitoarea versiune'),
+        ),
+      );
+    }
   }
 
   Future<void> _showLogoutDialog() async {

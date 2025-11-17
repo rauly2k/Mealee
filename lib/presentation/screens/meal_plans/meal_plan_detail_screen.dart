@@ -158,7 +158,7 @@ class _MealPlanDetailScreenState extends State<MealPlanDetailScreen>
           const SizedBox(height: 16),
 
           // Day notes
-          if (day.notes.isNotEmpty) ...[
+          if (day.notes?.isNotEmpty ?? false) ...[
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
@@ -172,7 +172,7 @@ class _MealPlanDetailScreenState extends State<MealPlanDetailScreen>
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        day.notes,
+                        day.notes ?? '',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
@@ -191,7 +191,7 @@ class _MealPlanDetailScreenState extends State<MealPlanDetailScreen>
   }
 
   Widget _buildMealCard(MealInfo meal) {
-    final mealTypeInfo = _getMealTypeInfo(meal.mealType);
+    final mealTypeInfo = _getMealTypeInfo(meal.mealType ?? 'other');
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -223,7 +223,7 @@ class _MealPlanDetailScreenState extends State<MealPlanDetailScreen>
                     color: mealTypeInfo['color'],
                   ),
                 ),
-                if (meal.time.isNotEmpty) ...[
+                if (meal.time?.isNotEmpty ?? false) ...[
                   const Spacer(),
                   Icon(
                     Icons.access_time,
@@ -232,7 +232,7 @@ class _MealPlanDetailScreenState extends State<MealPlanDetailScreen>
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    meal.time,
+                    meal.time ?? '',
                     style: const TextStyle(
                       fontSize: 13,
                       color: AppColors.textSecondary,
@@ -245,7 +245,7 @@ class _MealPlanDetailScreenState extends State<MealPlanDetailScreen>
 
           // Recipe/Food info
           InkWell(
-            onTap: meal.recipeId != null
+            onTap: meal.recipeId.isNotEmpty
                 ? () {
                     // TODO: Navigate to recipe detail
                     // Need to fetch recipe first
@@ -258,11 +258,11 @@ class _MealPlanDetailScreenState extends State<MealPlanDetailScreen>
                 children: [
                   Row(
                     children: [
-                      if (meal.imageUrl != null && meal.imageUrl!.isNotEmpty)
+                      if (meal.imageUrl.isNotEmpty)
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: Image.network(
-                            meal.imageUrl!,
+                            meal.imageUrl,
                             width: 60,
                             height: 60,
                             fit: BoxFit.cover,
@@ -305,7 +305,7 @@ class _MealPlanDetailScreenState extends State<MealPlanDetailScreen>
                           ],
                         ),
                       ),
-                      if (meal.recipeId != null)
+                      if (meal.recipeId.isNotEmpty)
                         const Icon(
                           Icons.chevron_right,
                           color: AppColors.textSecondary,
@@ -321,7 +321,7 @@ class _MealPlanDetailScreenState extends State<MealPlanDetailScreen>
                   ),
 
                   // Notes
-                  if (meal.notes.isNotEmpty) ...[
+                  if (meal.notes?.isNotEmpty ?? false) ...[
                     const SizedBox(height: 12),
                     Container(
                       padding: const EdgeInsets.all(8),
@@ -340,7 +340,7 @@ class _MealPlanDetailScreenState extends State<MealPlanDetailScreen>
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              meal.notes,
+                              meal.notes ?? '',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall

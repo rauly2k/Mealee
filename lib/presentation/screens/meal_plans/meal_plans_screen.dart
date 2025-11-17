@@ -390,7 +390,7 @@ class _MealPlansScreenState extends State<MealPlansScreen> {
   int _calculateTotalMeals(plan) {
     int total = 0;
     for (final day in plan.days) {
-      total += day.meals.length;
+      total += day.meals.length as int;
     }
     return total;
   }
