@@ -70,13 +70,23 @@ class _ManualFoodEntryScreenState extends State<ManualFoodEntryScreen> {
       final carbs = double.parse(_carbsController.text);
       final fats = double.parse(_fatsController.text);
 
+      // Parse portion size (e.g., "100 g" -> quantity: 100, unit: "g")
+      final portionSizeText = _portionSizeController.text.trim();
+      double quantity = 1.0;
+      String unit = 'porție';
+
+      final parts = portionSizeText.split(' ');
+      if (parts.length >= 2) {
+        quantity = double.tryParse(parts[0]) ?? 1.0;
+        unit = parts.sublist(1).join(' ');
+      } else if (parts.length == 1) {
+        quantity = double.tryParse(parts[0]) ?? 1.0;
+      }
+
       final manualEntry = ManualEntry(
         foodName: _foodNameController.text.trim(),
-        portionSize: _portionSizeController.text.trim(),
-        calories: calories,
-        protein: protein,
-        carbs: carbs,
-        fats: fats,
+        quantity: quantity,
+        unit: unit,
       );
 
       final nutrition = NutritionInfo(

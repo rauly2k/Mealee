@@ -117,13 +117,9 @@ class ShoppingListProvider with ChangeNotifier {
     final updatedItems = List<ShoppingItem>.from(list.items);
     updatedItems[itemIndex] = updatedItem;
 
-    final updatedList = ShoppingListModel(
-      listId: list.listId,
-      userId: list.userId,
-      name: list.name,
+    final updatedList = list.copyWith(
       items: updatedItems,
-      isCompleted: list.isCompleted,
-      createdAt: list.createdAt,
+      updatedAt: DateTime.now(),
     );
 
     await updateShoppingList(updatedList);
@@ -133,26 +129,24 @@ class ShoppingListProvider with ChangeNotifier {
   Future<bool> addItemToActiveList(String userId, ShoppingItem item) async {
     if (_activeList == null) {
       // Create new list
+      final now = DateTime.now();
       final newList = ShoppingListModel(
         listId: '',
         userId: userId,
-        name: 'Listă ${DateTime.now().day}/${DateTime.now().month}',
+        name: 'Listă ${now.day}/${now.month}',
         items: [item],
-        isCompleted: false,
-        createdAt: DateTime.now(),
+        createdFrom: 'manual',
+        createdAt: now,
+        updatedAt: now,
       );
       return await createShoppingList(newList);
     }
 
     // Add to existing list
     final updatedItems = List<ShoppingItem>.from(_activeList!.items)..add(item);
-    final updatedList = ShoppingListModel(
-      listId: _activeList!.listId,
-      userId: _activeList!.userId,
-      name: _activeList!.name,
+    final updatedList = _activeList!.copyWith(
       items: updatedItems,
-      isCompleted: false,
-      createdAt: _activeList!.createdAt,
+      updatedAt: DateTime.now(),
     );
 
     return await updateShoppingList(updatedList);
@@ -166,31 +160,26 @@ class ShoppingListProvider with ChangeNotifier {
     final list = _shoppingLists[listIndex];
     final updatedItems = list.items.where((i) => i.id != itemId).toList();
 
-    final updatedList = ShoppingListModel(
-      listId: list.listId,
-      userId: list.userId,
-      name: list.name,
+    final updatedList = list.copyWith(
       items: updatedItems,
-      isCompleted: list.isCompleted,
-      createdAt: list.createdAt,
+      updatedAt: DateTime.now(),
     );
 
     return await updateShoppingList(updatedList);
   }
 
-  /// Mark list as completed
+  /// Mark list as completed - marks all items as checked
   Future<bool> completeList(String userId, String listId) async {
     final listIndex = _shoppingLists.indexWhere((l) => l.listId == listId);
     if (listIndex == -1) return false;
 
     final list = _shoppingLists[listIndex];
-    final updatedList = ShoppingListModel(
-      listId: list.listId,
-      userId: list.userId,
-      name: list.name,
-      items: list.items,
-      isCompleted: true,
-      createdAt: list.createdAt,
+    // Mark all items as checked
+    final updatedItems = list.items.map((item) => item.copyWith(checked: true)).toList();
+
+    final updatedList = list.copyWith(
+      items: updatedItems,
+      updatedAt: DateTime.now(),
     );
 
     return await updateShoppingList(updatedList);

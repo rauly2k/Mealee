@@ -127,8 +127,8 @@ class PantryProvider with ChangeNotifier {
   List<PantryItemModel> searchItems(String query) {
     final lowerQuery = query.toLowerCase();
     return _pantryItems.where((item) {
-      return item.name.toLowerCase().contains(lowerQuery) ||
-          item.category.toLowerCase().contains(lowerQuery);
+      return item.ingredientName.toLowerCase().contains(lowerQuery) ||
+          (item.category?.toLowerCase().contains(lowerQuery) ?? false);
     }).toList();
   }
 

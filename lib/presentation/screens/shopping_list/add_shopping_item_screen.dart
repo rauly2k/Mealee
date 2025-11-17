@@ -68,11 +68,11 @@ class _AddShoppingItemScreenState extends State<AddShoppingItemScreen> {
 
       final item = ShoppingItem(
         id: const Uuid().v4(),
-        name: _nameController.text.trim(),
+        ingredient: _nameController.text.trim(),
         quantity: double.parse(_quantityController.text),
         unit: _selectedUnit,
         category: _selectedCategory,
-        isCompleted: false,
+        checked: false,
       );
 
       await shoppingListProvider.addItemToActiveList(

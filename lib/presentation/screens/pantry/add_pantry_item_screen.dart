@@ -80,14 +80,15 @@ class _AddPantryItemScreenState extends State<AddPantryItemScreen> {
       }
 
       final pantryItem = PantryItemModel(
-        itemId: const Uuid().v4(),
+        pantryItemId: const Uuid().v4(),
         userId: userProvider.currentUser!.userId,
-        name: _nameController.text.trim(),
+        ingredientName: _nameController.text.trim(),
         category: _selectedCategory,
         quantity: double.parse(_quantityController.text),
         unit: _selectedUnit,
         expiryDate: _selectedExpiryDate,
-        addedAt: DateTime.now(),
+        addedDate: DateTime.now(),
+        source: 'manual',
       );
 
       await pantryProvider.addPantryItem(pantryItem);

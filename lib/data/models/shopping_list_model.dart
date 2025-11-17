@@ -88,6 +88,9 @@ class ShoppingListModel extends Equatable {
   /// Check if all items are checked
   bool get isComplete => totalItems > 0 && checkedItems == totalItems;
 
+  /// Backward compatibility: isCompleted is an alias for isComplete
+  bool get isCompleted => isComplete;
+
   @override
   List<Object?> get props => [
         listId,
@@ -102,6 +105,7 @@ class ShoppingListModel extends Equatable {
 }
 
 class ShoppingItem extends Equatable {
+  final String id;
   final String ingredient;
   final double quantity;
   final String unit;
@@ -111,6 +115,7 @@ class ShoppingItem extends Equatable {
   final String? notes;
 
   const ShoppingItem({
+    required this.id,
     required this.ingredient,
     required this.quantity,
     required this.unit,
@@ -120,12 +125,19 @@ class ShoppingItem extends Equatable {
     this.notes,
   });
 
+  // Backward compatibility: isCompleted is an alias for checked
+  bool get isCompleted => checked;
+
+  // Backward compatibility: name is an alias for ingredient
+  String get name => ingredient;
+
   factory ShoppingItem.fromMap(Map<String, dynamic> map) {
     return ShoppingItem(
+      id: map['id'] ?? '',
       ingredient: map['ingredient'] ?? '',
       quantity: (map['quantity'] ?? 0).toDouble(),
       unit: map['unit'] ?? '',
-      checked: map['checked'] ?? false,
+      checked: map['checked'] ?? map['isCompleted'] ?? false, // Support both field names
       inPantry: map['inPantry'] ?? false,
       category: map['category'],
       notes: map['notes'],
@@ -134,6 +146,7 @@ class ShoppingItem extends Equatable {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'ingredient': ingredient,
       'quantity': quantity,
       'unit': unit,
@@ -145,19 +158,22 @@ class ShoppingItem extends Equatable {
   }
 
   ShoppingItem copyWith({
+    String? id,
     String? ingredient,
     double? quantity,
     String? unit,
     bool? checked,
+    bool? isCompleted, // Backward compatibility
     bool? inPantry,
     String? category,
     String? notes,
   }) {
     return ShoppingItem(
+      id: id ?? this.id,
       ingredient: ingredient ?? this.ingredient,
       quantity: quantity ?? this.quantity,
       unit: unit ?? this.unit,
-      checked: checked ?? this.checked,
+      checked: checked ?? isCompleted ?? this.checked, // Support both parameters
       inPantry: inPantry ?? this.inPantry,
       category: category ?? this.category,
       notes: notes ?? this.notes,
@@ -166,6 +182,7 @@ class ShoppingItem extends Equatable {
 
   @override
   List<Object?> get props => [
+        id,
         ingredient,
         quantity,
         unit,

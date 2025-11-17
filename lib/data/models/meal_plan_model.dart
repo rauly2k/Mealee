@@ -68,6 +68,11 @@ class MealPlanModel extends Equatable {
     );
   }
 
+  // Backward compatibility getters
+  String get name => 'Plan săptămânal ${weekStartDate.day}/${weekStartDate.month}';
+  DateTime get startDate => weekStartDate;
+  DateTime get endDate => weekStartDate.add(const Duration(days: 7));
+
   @override
   List<Object?> get props => [
         mealPlanId,
@@ -172,6 +177,23 @@ class DayMealPlan extends Equatable {
     );
   }
 
+  // Backward compatibility getters
+  String get dayName {
+    const days = ['Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă', 'Duminică'];
+    return days[(dayOfWeek - 1) % 7];
+  }
+
+  List<MealInfo> get meals {
+    final result = <MealInfo>[];
+    if (breakfast != null) result.add(breakfast!);
+    if (lunch != null) result.add(lunch!);
+    if (dinner != null) result.add(dinner!);
+    result.addAll(snacks);
+    return result;
+  }
+
+  String? get notes => null; // No notes field in current model
+
   @override
   List<Object?> get props => [dayOfWeek, date, breakfast, lunch, dinner, snacks];
 }
@@ -226,6 +248,13 @@ class MealInfo extends Equatable {
       portionMultiplier: portionMultiplier ?? this.portionMultiplier,
     );
   }
+
+  // Backward compatibility getters
+  String? get mealType => null; // Not stored in current model
+  String? get time => null; // Not stored in current model
+  String get imageUrl => recipeImageUrl;
+  double get servings => portionMultiplier;
+  String? get notes => null; // Not stored in current model
 
   @override
   List<Object?> get props => [

@@ -365,7 +365,7 @@ class _PantryScreenState extends State<PantryScreen> {
               );
 
               if (confirmed == true && mounted) {
-                await context.read<PantryProvider>().deletePantryItem(userId, item.itemId);
+                await context.read<PantryProvider>().deletePantryItem(userId, item.pantryItemId);
               }
             }
           },
