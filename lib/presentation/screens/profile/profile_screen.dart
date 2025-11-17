@@ -6,6 +6,9 @@ import '../../../core/utils/helpers.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/user_provider.dart';
 import '../../widgets/common/loading_indicator.dart';
+import 'edit_profile_screen.dart';
+import '../settings/settings_screen.dart';
+import '../auth/login_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -19,7 +22,11 @@ class ProfileScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.settings_outlined),
             onPressed: () {
-              // TODO: Navigate to settings
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const SettingsScreen(),
+                ),
+              );
             },
           ),
         ],
@@ -141,8 +148,16 @@ class ProfileScreen extends StatelessWidget {
                   context,
                   icon: Icons.edit_outlined,
                   title: AppStrings.editProfile,
-                  onTap: () {
-                    // TODO: Navigate to edit profile
+                  onTap: () async {
+                    final result = await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const EditProfileScreen(),
+                      ),
+                    );
+                    // Reload user data if profile was updated
+                    if (result == true && context.mounted) {
+                      context.read<UserProvider>().loadCurrentUser();
+                    }
                   },
                 ),
                 _buildMenuOption(
@@ -166,7 +181,11 @@ class ProfileScreen extends StatelessWidget {
                   icon: Icons.settings_outlined,
                   title: AppStrings.settings,
                   onTap: () {
-                    // TODO: Navigate to settings
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const SettingsScreen(),
+                      ),
+                    );
                   },
                 ),
                 _buildMenuOption(
@@ -206,7 +225,12 @@ class ProfileScreen extends StatelessWidget {
 
                     if (confirmed == true && context.mounted) {
                       await context.read<AuthProvider>().signOut();
-                      // TODO: Navigate to login
+                      if (context.mounted) {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (_) => const LoginScreen()),
+                          (route) => false,
+                        );
+                      }
                     }
                   },
                 ),
