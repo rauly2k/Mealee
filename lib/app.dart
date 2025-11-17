@@ -7,6 +7,7 @@ import 'presentation/providers/user_provider.dart';
 import 'presentation/providers/recipe_provider.dart';
 import 'presentation/providers/food_log_provider.dart';
 import 'presentation/providers/meal_plan_provider.dart';
+import 'presentation/providers/pantry_provider.dart';
 import 'presentation/screens/splash/splash_screen.dart';
 
 class MealeeApp extends StatelessWidget {
@@ -21,6 +22,7 @@ class MealeeApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RecipeProvider()),
         ChangeNotifierProvider(create: (_) => FoodLogProvider()),
         ChangeNotifierProvider(create: (_) => MealPlanProvider()),
+        ChangeNotifierProvider(create: (_) => PantryProvider()),
       ],
       child: MaterialApp(
         title: AppStrings.appName,
