@@ -151,7 +151,7 @@ extension DoubleExtensions on double {
 
   /// Clamp between min and max
   double clampValue(double min, double max) {
-    return clamp(min, max);
+    return clamp(min, max).toDouble();
   }
 }
 

@@ -18,7 +18,6 @@ class PantryScreen extends StatefulWidget {
 
 class _PantryScreenState extends State<PantryScreen> {
   String _selectedFilter = 'all';
-  String _searchQuery = '';
 
   @override
   void initState() {
@@ -461,7 +460,7 @@ class PantrySearchDelegate extends SearchDelegate {
       itemBuilder: (context, index) {
         final item = results[index];
         return ListTile(
-          title: Text(item.name),
+          title: Text(item.ingredientName),
           subtitle: Text('${item.quantity} ${item.unit} • ${item.category}'),
           trailing: item.expiryDate != null
               ? Text(

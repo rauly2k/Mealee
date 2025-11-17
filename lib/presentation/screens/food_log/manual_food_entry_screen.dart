@@ -98,7 +98,7 @@ class _ManualFoodEntryScreenState extends State<ManualFoodEntryScreen> {
 
       await foodLogProvider.addManualLog(
         userId: userProvider.currentUser!.userId,
-        entry: manualEntry,
+        manualEntry: manualEntry,
         mealType: _selectedMealType,
         nutrition: nutrition,
       );
