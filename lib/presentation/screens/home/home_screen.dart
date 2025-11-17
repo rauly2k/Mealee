@@ -7,6 +7,8 @@ import '../../providers/user_provider.dart';
 import '../../providers/food_log_provider.dart';
 import '../../widgets/common/loading_indicator.dart';
 import '../../widgets/recipe/nutrition_info.dart';
+import '../food_log/manual_food_entry_screen.dart';
+import '../food_log/food_log_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -133,6 +135,21 @@ class _HomeScreenState extends State<HomeScreen> {
                               target: goals.fatsTarget,
                               color: AppColors.fats,
                             ),
+                            const SizedBox(height: 12),
+                            // View full log button
+                            Center(
+                              child: TextButton.icon(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => const FoodLogScreen(),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.history, size: 18),
+                                label: const Text('Vezi jurnalul complet'),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -156,8 +173,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           icon: Icons.add_circle_outline,
                           label: AppStrings.logMeal,
                           color: AppColors.primary,
-                          onTap: () {
-                            // TODO: Navigate to log meal
+                          onTap: () async {
+                            final result = await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const ManualFoodEntryScreen(),
+                              ),
+                            );
+                            // Reload data if a log was added
+                            if (result == true && context.mounted) {
+                              _loadData();
+                            }
                           },
                         ),
                       ),

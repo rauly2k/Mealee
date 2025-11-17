@@ -5,6 +5,7 @@ import '../../providers/recipe_provider.dart';
 import '../../widgets/common/loading_indicator.dart';
 import '../../widgets/common/error_widget.dart';
 import '../../widgets/recipe/recipe_card.dart';
+import 'recipe_detail_screen.dart';
 
 class RecipesListScreen extends StatefulWidget {
   const RecipesListScreen({super.key});
@@ -76,7 +77,11 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                   child: RecipeCard(
                     recipe: recipe,
                     onTap: () {
-                      // TODO: Navigate to recipe detail
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => RecipeDetailScreen(recipe: recipe),
+                        ),
+                      );
                     },
                     onFavorite: () {
                       recipeProvider.toggleFavorite(recipe.recipeId);

@@ -25,17 +25,21 @@ class FoodLogProvider with ChangeNotifier {
 
   /// Load today's food logs
   Future<void> loadTodayLogs(String userId) async {
+    await loadLogsByDate(userId, DateTime.now());
+  }
+
+  /// Load food logs by date
+  Future<void> loadLogsByDate(String userId, DateTime date) async {
     try {
       _isLoading = true;
       _errorMessage = null;
       notifyListeners();
 
-      final today = DateTime.now();
-      _todayLogs = await _foodLogRepository.getFoodLogsByDate(userId, today);
+      _todayLogs = await _foodLogRepository.getFoodLogsByDate(userId, date);
       _todayNutrition =
-          await _foodLogRepository.getDailyNutritionTotals(userId, today);
+          await _foodLogRepository.getDailyNutritionTotals(userId, date);
       _nutritionByMeal =
-          await _foodLogRepository.getNutritionByMealType(userId, today);
+          await _foodLogRepository.getNutritionByMealType(userId, date);
 
       _isLoading = false;
       notifyListeners();
@@ -136,6 +140,43 @@ class FoodLogProvider with ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  /// Delete food log (simple version)
+  Future<void> deleteLog(String logId) async {
+    try {
+      await _foodLogRepository.deleteFoodLog(logId);
+      // Remove from local list
+      _todayLogs.removeWhere((log) => log.logId == logId);
+      // Recalculate nutrition
+      _todayNutrition = _calculateNutritionFromLogs(_todayLogs);
+      notifyListeners();
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+    }
+  }
+
+  /// Calculate nutrition from logs
+  NutritionInfo _calculateNutritionFromLogs(List<FoodLogModel> logs) {
+    double calories = 0;
+    double protein = 0;
+    double carbs = 0;
+    double fats = 0;
+
+    for (final log in logs) {
+      calories += log.nutrition.calories;
+      protein += log.nutrition.protein;
+      carbs += log.nutrition.carbs;
+      fats += log.nutrition.fats;
+    }
+
+    return NutritionInfo(
+      calories: calories,
+      protein: protein,
+      carbs: carbs,
+      fats: fats,
+    );
   }
 
   /// Get logs by meal type
