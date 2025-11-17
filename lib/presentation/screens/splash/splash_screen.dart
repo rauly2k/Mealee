@@ -6,6 +6,7 @@ import '../../../data/services/local_storage_service.dart';
 import '../../providers/auth_provider.dart';
 import '../auth/login_screen.dart';
 import '../onboarding/welcome_screen.dart';
+import '../main_navigation.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -36,10 +37,8 @@ class _SplashScreenState extends State<SplashScreen> {
     // Navigate based on auth state and onboarding status
     if (authProvider.isAuthenticated) {
       // User is logged in - navigate to main app
-      // TODO: Navigate to main navigation screen when created
-      // For now, navigate to login screen
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        MaterialPageRoute(builder: (_) => const MainNavigation()),
       );
     } else if (!isOnboardingCompleted) {
       // First time user - show onboarding

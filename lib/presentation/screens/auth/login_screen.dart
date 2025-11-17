@@ -5,6 +5,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/utils/validators.dart';
 import '../../providers/auth_provider.dart';
 import 'register_screen.dart';
+import '../main_navigation.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -37,9 +38,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (mounted) {
         if (success) {
-          // TODO: Navigate to main app
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Autentificare reușită!')),
+          // Navigate to main app
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const MainNavigation()),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -60,9 +61,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (mounted) {
       if (success) {
-        // TODO: Navigate to main app
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Autentificare cu Google reușită!')),
+        // Navigate to main app
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const MainNavigation()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
