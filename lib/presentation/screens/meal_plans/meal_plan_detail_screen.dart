@@ -4,7 +4,6 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/helpers.dart';
 import '../../../data/models/meal_plan_model.dart';
 import '../../widgets/recipe/nutrition_info.dart';
-import '../recipes/recipe_detail_screen.dart';
 
 class MealPlanDetailScreen extends StatefulWidget {
   final MealPlanModel mealPlan;

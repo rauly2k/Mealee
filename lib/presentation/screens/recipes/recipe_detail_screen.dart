@@ -8,7 +8,6 @@ import '../../../data/models/recipe_model.dart';
 import '../../providers/recipe_provider.dart';
 import '../../providers/food_log_provider.dart';
 import '../../providers/user_provider.dart';
-import '../../widgets/common/loading_indicator.dart';
 import '../../widgets/recipe/nutrition_info.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
