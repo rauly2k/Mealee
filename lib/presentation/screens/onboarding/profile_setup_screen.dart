@@ -201,7 +201,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.primaryLight.withOpacity(0.2)
+              ? AppColors.primaryLight.withValues(alpha: 0.2)
               : AppColors.surfaceVariant,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
@@ -244,7 +244,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: isSelected
-                ? AppColors.primaryLight.withOpacity(0.2)
+                ? AppColors.primaryLight.withValues(alpha: 0.2)
                 : AppColors.surfaceVariant,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(

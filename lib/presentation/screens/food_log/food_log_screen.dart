@@ -289,7 +289,7 @@ class _FoodLogScreenState extends State<FoodLogScreen> {
 
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: AppColors.primary.withOpacity(0.1),
+        backgroundColor: AppColors.primary.withValues(alpha: 0.1),
         child: Icon(
           log.recipeId != null
               ? Icons.restaurant_menu
@@ -345,7 +345,7 @@ class _FoodLogScreenState extends State<FoodLogScreen> {
         const SizedBox(height: 4),
         LinearProgressIndicator(
           value: percentage / 100,
-          backgroundColor: color.withOpacity(0.2),
+          backgroundColor: color.withValues(alpha: 0.2),
           valueColor: AlwaysStoppedAnimation<Color>(color),
         ),
       ],

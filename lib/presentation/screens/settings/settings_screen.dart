@@ -279,7 +279,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildSectionHeader('Zona periculoasă'),
           const SizedBox(height: 8),
           Card(
-            color: AppColors.error.withOpacity(0.05),
+            color: AppColors.error.withValues(alpha: 0.05),
             child: Column(
               children: [
                 ListTile(

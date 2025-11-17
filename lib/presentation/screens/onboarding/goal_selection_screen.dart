@@ -146,7 +146,7 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: isSelected
-              ? goal.color.withOpacity(0.1)
+              ? goal.color.withValues(alpha: 0.1)
               : AppColors.surfaceVariant,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
@@ -161,7 +161,7 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
               decoration: BoxDecoration(
                 color: isSelected
                     ? goal.color
-                    : goal.color.withOpacity(0.2),
+                    : goal.color.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(

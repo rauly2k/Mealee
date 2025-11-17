@@ -143,7 +143,7 @@ class _DietaryPreferencesScreenState extends State<DietaryPreferencesScreen> {
                               }
                             });
                           },
-                          selectedColor: AppColors.primaryLight.withOpacity(0.3),
+                          selectedColor: AppColors.primaryLight.withValues(alpha: 0.3),
                           checkmarkColor: AppColors.primary,
                         );
                       }).toList(),
@@ -174,7 +174,7 @@ class _DietaryPreferencesScreenState extends State<DietaryPreferencesScreen> {
                               }
                             });
                           },
-                          selectedColor: AppColors.error.withOpacity(0.2),
+                          selectedColor: AppColors.error.withValues(alpha: 0.2),
                           checkmarkColor: AppColors.error,
                         );
                       }).toList(),
@@ -183,7 +183,7 @@ class _DietaryPreferencesScreenState extends State<DietaryPreferencesScreen> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: AppColors.info.withOpacity(0.1),
+                        color: AppColors.info.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(

@@ -108,7 +108,7 @@ class _MealPlanDetailScreenState extends State<MealPlanDetailScreen>
         children: [
           // Day summary card
           Card(
-            color: AppColors.primary.withOpacity(0.1),
+            color: AppColors.primary.withValues(alpha: 0.1),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -202,7 +202,7 @@ class _MealPlanDetailScreenState extends State<MealPlanDetailScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: mealTypeInfo['color'].withOpacity(0.1),
+              color: mealTypeInfo['color'].withValues(alpha: 0.1),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
@@ -326,7 +326,7 @@ class _MealPlanDetailScreenState extends State<MealPlanDetailScreen>
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: AppColors.info.withOpacity(0.1),
+                        color: AppColors.info.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(

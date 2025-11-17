@@ -277,7 +277,7 @@ class _ManualFoodEntryScreenState extends State<ManualFoodEntryScreen> {
 
             // Info card
             Card(
-              color: AppColors.info.withOpacity(0.1),
+              color: AppColors.info.withValues(alpha: 0.1),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Row(

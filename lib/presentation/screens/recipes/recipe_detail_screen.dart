@@ -62,7 +62,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          Colors.black.withOpacity(0.7),
+                          Colors.black.withValues(alpha: 0.7),
                         ],
                       ),
                     ),
@@ -357,7 +357,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                         width: 24,
                         height: 24,
                         decoration: BoxDecoration(
-                          color: AppColors.primaryLight.withOpacity(0.2),
+                          color: AppColors.primaryLight.withValues(alpha: 0.2),
                           shape: BoxShape.circle,
                         ),
                         child: Center(
@@ -579,7 +579,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           onSelected(value);
         });
       },
-      selectedColor: AppColors.primaryLight.withOpacity(0.3),
+      selectedColor: AppColors.primaryLight.withValues(alpha: 0.3),
       checkmarkColor: AppColors.primary,
     );
   }
