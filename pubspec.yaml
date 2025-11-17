@@ -32,6 +32,7 @@ dependencies:
   # Network & API
   http: ^1.2.0
   dio: ^5.4.0
+  google_generative_ai: ^0.2.2
 
   # UI & Animations
   cupertino_icons: ^1.0.8
