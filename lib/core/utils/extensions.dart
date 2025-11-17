@@ -145,13 +145,13 @@ extension ContextExtensions on BuildContext {
 extension DoubleExtensions on double {
   /// Round to specified decimal places
   double roundToDecimal(int places) {
-    final mod = pow(10.0, places) as double;
+    final mod = pow(10.0, places).toDouble();
     return (this * mod).round().toDouble() / mod;
   }
 
   /// Clamp between min and max
   double clampValue(double min, double max) {
-    return clamp(min, max) as double;
+    return clamp(min, max);
   }
 }
 

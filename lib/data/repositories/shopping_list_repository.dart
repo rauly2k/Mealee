@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/shopping_list_model.dart';
 import '../services/firebase_service.dart';
 
@@ -46,6 +45,10 @@ class ShoppingListRepository {
       throw Exception('Eroare la încărcarea listelor de cumpărături: $e');
     }
   }
+
+  /// Alias for getUserShoppingLists (backward compatibility)
+  Future<List<ShoppingListModel>> getShoppingListsByUserId(String userId) =>
+      getUserShoppingLists(userId);
 
   /// Stream user shopping lists
   Stream<List<ShoppingListModel>> streamUserShoppingLists(String userId) {

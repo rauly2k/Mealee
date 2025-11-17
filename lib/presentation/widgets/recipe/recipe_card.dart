@@ -78,7 +78,7 @@ class RecipeCard extends StatelessWidget {
                     top: 8,
                     right: 8,
                     child: CircleAvatar(
-                      backgroundColor: AppColors.surface.withOpacity(0.9),
+                      backgroundColor: AppColors.surface.withValues(alpha: 0.9),
                       child: IconButton(
                         icon: Icon(
                           recipe.isFavorite

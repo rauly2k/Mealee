@@ -66,6 +66,34 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  /// Update user display name
+  Future<bool> updateDisplayName(String displayName) async {
+    try {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
+
+      if (_currentUser == null) {
+        throw Exception('No current user');
+      }
+
+      // Update display name in Firebase Auth and Firestore
+      await _userRepository.updateDisplayName(_currentUser!.userId, displayName);
+
+      // Reload user
+      await loadCurrentUser();
+
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   /// Update user goals
   Future<bool> updateGoals(UserGoals goals) async {
     try {

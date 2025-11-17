@@ -222,7 +222,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
             // Info card
             Card(
-              color: AppColors.info.withOpacity(0.1),
+              color: AppColors.info.withValues(alpha: 0.1),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
@@ -269,7 +269,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.primary.withOpacity(0.1)
+              ? AppColors.primary.withValues(alpha: 0.1)
               : AppColors.backgroundLight,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
@@ -329,7 +329,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           margin: const EdgeInsets.only(bottom: 8),
           decoration: BoxDecoration(
             color: isSelected
-                ? AppColors.primary.withOpacity(0.1)
+                ? AppColors.primary.withValues(alpha: 0.1)
                 : AppColors.backgroundLight,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(

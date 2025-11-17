@@ -177,7 +177,7 @@ class _MealPlansScreenState extends State<MealPlansScreen> {
 
     return Card(
       elevation: 4,
-      color: AppColors.primary.withOpacity(0.05),
+      color: AppColors.primary.withValues(alpha: 0.05),
       child: InkWell(
         onTap: () {
           Navigator.of(context).push(
@@ -284,7 +284,7 @@ class _MealPlansScreenState extends State<MealPlansScreen> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isActive
-                      ? AppColors.success.withOpacity(0.1)
+                      ? AppColors.success.withValues(alpha: 0.1)
                       : AppColors.backgroundLight,
                   borderRadius: BorderRadius.circular(8),
                 ),

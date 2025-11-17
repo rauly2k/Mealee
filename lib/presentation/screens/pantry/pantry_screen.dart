@@ -193,7 +193,7 @@ class _PantryScreenState extends State<PantryScreen> {
         children: [
           if (expiredItems.isNotEmpty)
             Card(
-              color: AppColors.error.withOpacity(0.1),
+              color: AppColors.error.withValues(alpha: 0.1),
               child: ListTile(
                 leading: const Icon(Icons.warning, color: AppColors.error),
                 title: Text(
@@ -215,7 +215,7 @@ class _PantryScreenState extends State<PantryScreen> {
             const SizedBox(height: 8),
           if (expiringItems.isNotEmpty)
             Card(
-              color: AppColors.warning.withOpacity(0.1),
+              color: AppColors.warning.withValues(alpha: 0.1),
               child: ListTile(
                 leading: const Icon(Icons.access_time, color: AppColors.warning),
                 title: Text(
@@ -286,7 +286,7 @@ class _PantryScreenState extends State<PantryScreen> {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: expiryColor.withOpacity(0.1),
+            color: expiryColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
@@ -365,7 +365,7 @@ class _PantryScreenState extends State<PantryScreen> {
               );
 
               if (confirmed == true && mounted) {
-                await context.read<PantryProvider>().deletePantryItem(userId, item.itemId);
+                await context.read<PantryProvider>().deletePantryItem(userId, item.pantryItemId);
               }
             }
           },

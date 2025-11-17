@@ -1,8 +1,6 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import '../models/recipe_model.dart';
-import '../models/meal_plan_model.dart';
-import 'dart:convert';
 
 class GeminiService {
   static const String _apiKey = 'YOUR_GEMINI_API_KEY_HERE'; // TODO: Move to environment variables

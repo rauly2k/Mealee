@@ -1,3 +1,5 @@
+library;
+
 /// Application-wide constants
 ///
 /// This file contains all magic numbers, durations, sizes, and other

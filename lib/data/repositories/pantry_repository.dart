@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/pantry_item_model.dart';
 import '../services/firebase_service.dart';
 
@@ -32,6 +31,13 @@ class PantryRepository {
       throw Exception('Eroare la încărcarea ingredientelor: $e');
     }
   }
+
+  /// Alias for getUserPantryItems (backward compatibility)
+  Future<List<PantryItemModel>> getPantryItemsByUserId(String userId) =>
+      getUserPantryItems(userId);
+
+  /// Alias for addPantryItem (backward compatibility)
+  Future<String> createPantryItem(PantryItemModel item) => addPantryItem(item);
 
   /// Stream pantry items
   Stream<List<PantryItemModel>> streamUserPantryItems(String userId) {

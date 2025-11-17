@@ -159,6 +159,9 @@ class ManualEntry extends Equatable {
     );
   }
 
+  // Backward compatibility: portionSize returns formatted quantity + unit
+  String get portionSize => '${quantity.toStringAsFixed(quantity.truncateToDouble() == quantity ? 0 : 1)} $unit';
+
   @override
   List<Object?> get props => [foodName, quantity, unit, description];
 }
