@@ -142,7 +142,7 @@ class Sanitizers {
     String sanitized = email.trim().toLowerCase();
 
     // Remove dangerous characters
-    sanitized = sanitized.replaceAll(RegExp(r'[<>"\';]'), '');
+    sanitized = sanitized.replaceAll(RegExp(r'[<>"\;]'), '');
 
     return sanitized;
   }

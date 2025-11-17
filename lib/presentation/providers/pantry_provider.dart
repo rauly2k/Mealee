@@ -117,7 +117,7 @@ class PantryProvider with ChangeNotifier {
   }
 
   /// Get all categories
-  List<String> getCategories() {
+  List<String?> getCategories() {
     final categories = _pantryItems.map((item) => item.category).toSet().toList();
     categories.sort();
     return categories;
