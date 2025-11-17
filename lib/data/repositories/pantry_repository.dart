@@ -32,6 +32,13 @@ class PantryRepository {
     }
   }
 
+  /// Alias for getUserPantryItems (backward compatibility)
+  Future<List<PantryItemModel>> getPantryItemsByUserId(String userId) =>
+      getUserPantryItems(userId);
+
+  /// Alias for addPantryItem (backward compatibility)
+  Future<String> createPantryItem(PantryItemModel item) => addPantryItem(item);
+
   /// Stream pantry items
   Stream<List<PantryItemModel>> streamUserPantryItems(String userId) {
     return _firebaseService.pantryItemsCollection

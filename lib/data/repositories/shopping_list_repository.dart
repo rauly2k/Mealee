@@ -46,6 +46,10 @@ class ShoppingListRepository {
     }
   }
 
+  /// Alias for getUserShoppingLists (backward compatibility)
+  Future<List<ShoppingListModel>> getShoppingListsByUserId(String userId) =>
+      getUserShoppingLists(userId);
+
   /// Stream user shopping lists
   Stream<List<ShoppingListModel>> streamUserShoppingLists(String userId) {
     return _firebaseService.shoppingListsCollection

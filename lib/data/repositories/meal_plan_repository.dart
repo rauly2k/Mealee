@@ -47,6 +47,10 @@ class MealPlanRepository {
     }
   }
 
+  /// Alias for getUserMealPlans (backward compatibility)
+  Future<List<MealPlanModel>> getMealPlansByUserId(String userId) =>
+      getUserMealPlans(userId);
+
   /// Get current week's meal plan
   Future<MealPlanModel?> getCurrentWeekMealPlan(String userId) async {
     try {
