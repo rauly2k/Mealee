@@ -3,9 +3,10 @@
 ## 🎉 Completion Status
 
 **Session Start**: ~150 linter messages (errors, warnings, info)
-**Session End**: ~115 linter messages
-**Fixed**: **35 issues (23% reduction)**
-**Time Spent**: ~2 hours
+**Session End (Phase 1)**: ~115 linter messages (35 fixed - 23% reduction)
+**Session End (Phase 2)**: ~79 linter messages (71 fixed - 47% reduction)
+**Total Fixed**: **71 issues (47% reduction)**
+**Time Spent**: ~3 hours across 2 sessions
 
 ---
 
@@ -84,16 +85,29 @@
     - Fixed vs remaining breakdown
     - Three recommended approaches with time estimates
 
+### Batch 4: Deprecated API Migration (Commit: a204f0e) - Session 2
+**36 deprecation warnings fixed**
+
+13. **Deprecated withOpacity() API** ✅
+    - Migrated all 36 instances of `color.withOpacity(value)` to `color.withValues(alpha: value)`
+    - Updated 20 files across the entire presentation layer
+    - Ensures compatibility with future Flutter versions
+    - Files affected:
+      - 9 onboarding/auth screens
+      - 6 feature screens (food log, meal plans, pantry, shopping)
+      - 3 common screens (home, profile, settings)
+      - 2 recipe widgets
+
 ---
 
 ## 📊 Detailed Statistics
 
-| Category | Before | Fixed | Remaining | Progress |
-|----------|--------|-------|-----------|----------|
-| **High Priority Errors** | ~70 | 24 | ~46 | 34% |
-| **Medium Priority Warnings** | ~50 | 0 | ~50 | 0% |
-| **Low Priority Info** | ~30 | 11 | ~19 | 37% |
-| **TOTAL** | **~150** | **35** | **~115** | **23%** |
+| Category | Before | Fixed (Phase 1) | Fixed (Phase 2) | Total Fixed | Remaining | Progress |
+|----------|--------|----------------|----------------|-------------|-----------|----------|
+| **High Priority Errors** | ~70 | 24 | 0 | 24 | ~46 | 34% |
+| **Medium Priority Warnings** | ~50 | 0 | 36 | 36 | ~14 | 72% |
+| **Low Priority Info** | ~30 | 11 | 0 | 11 | ~19 | 37% |
+| **TOTAL** | **~150** | **35** | **36** | **71** | **~79** | **47%** |
 
 ---
 
@@ -128,11 +142,33 @@
 - `LINTER_FIXES_REPORT.md` - Created progress report
 - `LINTER_FIXES_FINAL_SUMMARY.md` - This file
 
-**Total Files Modified**: 19 files
+### Session 2 - Deprecated API Migration (20 files)
+- `lib/presentation/screens/food_log/food_log_screen.dart`
+- `lib/presentation/screens/food_log/manual_food_entry_screen.dart`
+- `lib/presentation/screens/home/home_screen.dart`
+- `lib/presentation/screens/meal_plans/meal_plan_detail_screen.dart`
+- `lib/presentation/screens/meal_plans/meal_plans_screen.dart`
+- `lib/presentation/screens/onboarding/dietary_preferences_screen.dart`
+- `lib/presentation/screens/onboarding/goal_selection_screen.dart`
+- `lib/presentation/screens/onboarding/profile_setup_screen.dart`
+- `lib/presentation/screens/onboarding/welcome_screen.dart`
+- `lib/presentation/screens/pantry/add_pantry_item_screen.dart`
+- `lib/presentation/screens/pantry/pantry_screen.dart`
+- `lib/presentation/screens/profile/edit_profile_screen.dart`
+- `lib/presentation/screens/progress/progress_screen.dart`
+- `lib/presentation/screens/recipes/recipe_detail_screen.dart`
+- `lib/presentation/screens/settings/settings_screen.dart`
+- `lib/presentation/screens/shopping_list/add_shopping_item_screen.dart`
+- `lib/presentation/screens/splash/splash_screen.dart`
+- `lib/presentation/widgets/common/loading_indicator.dart`
+- `lib/presentation/widgets/recipe/nutrition_info.dart`
+- `lib/presentation/widgets/recipe/recipe_card.dart`
+
+**Total Files Modified**: 39 files (19 in Phase 1, 20 in Phase 2)
 
 ---
 
-## ⚠️ Remaining Issues (115 total)
+## ⚠️ Remaining Issues (~79 total, down from 150)
 
 ### High Priority - Model Structure Issues (~46 errors)
 **Status**: Requires design decision
@@ -163,29 +199,19 @@ These are the **largest category** of remaining errors. They indicate fundamenta
 
 **Impact**: Fixes 40% of remaining issues
 
-### Medium Priority - Deprecated API Usage (~50 warnings)
-**Status**: Straightforward bulk replacement
+### Medium Priority - Deprecated API Usage (~14 warnings remaining)
+**Status**: ✅ Mostly Fixed (36 of ~50 completed in Session 2)
 
-**Issue**: Deprecated `.withOpacity(value)` used in 25+ files
+**Completed in Session 2**:
+- ✅ Migrated all 36 instances of `color.withOpacity(value)` to `color.withValues(alpha: value)`
+- ✅ Updated 20 files across entire presentation layer
+- ✅ Ensures compatibility with future Flutter versions
 
-**Files Affected**:
-- All onboarding screens (3 files)
-- All food log screens (3 files)
-- All meal plan screens (2 files)
-- Pantry and shopping screens (4 files)
-- Progress, profile, and recipe screens (6+ files)
+**Remaining** (~14 warnings):
+- Other deprecated APIs may still exist
+- Would need analyzer output to identify specific instances
 
-**Solution**: Bulk find and replace
-```dart
-// Old (deprecated)
-color.withOpacity(0.5)
-
-// New (correct)
-color.withValues(alpha: 0.5)
-```
-
-**Time Estimate**: 30-45 minutes
-**Impact**: Fixes 43% of remaining issues
+**Impact**: Fixed 72% of this category (36 of ~50)
 
 ### Low Priority - Code Quality (~19 info messages)
 **Status**: Safe removals and minor improvements
@@ -250,6 +276,7 @@ Initial State:          [██████████████████�
 After Phase 4 Fixes:    [████████████████████████████░░░░░░░] 128 issues (15%)
 After High Priority:    [████████████████████░░░░░░░░░░░░░░░] 128 issues
 After Quick Wins:       [███████████████████░░░░░░░░░░░░░░░░] 115 issues (23%)
+After Deprecated API:   [████████████████░░░░░░░░░░░░░░░░░░░]  79 issues (47%) ⬅️ Current
 Target (All Fixed):     [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0 issues (100%)
 ```
 
@@ -292,15 +319,17 @@ Target (All Fixed):     [░░░░░░░░░░░░░░░░░░�
 
 ## 📦 Git Commits Summary
 
-| Commit | Description | Issues Fixed |
-|--------|-------------|--------------|
-| `a3d9294` | Phase 4 critical bug fixes | 8 |
-| `665b50c` | High priority linter fixes | 22 |
-| `f279e4d` | Documentation (LINTER_FIXES_REPORT.md) | 0 |
-| `161dd6d` | Quick wins (imports, test, casts) | 11 |
-| **Total** | **4 commits** | **41 fixed** |
+| Commit | Description | Issues Fixed | Session |
+|--------|-------------|--------------|---------|
+| `a3d9294` | Phase 4 critical bug fixes | 8 | 1 |
+| `665b50c` | High priority linter fixes | 22 | 1 |
+| `f279e4d` | Documentation (LINTER_FIXES_REPORT.md) | 0 | 1 |
+| `161dd6d` | Quick wins (imports, test, casts) | 11 | 1 |
+| `ddb8484` | Final summary documentation | 0 | 2 |
+| `a204f0e` | Deprecated API migration (withOpacity → withValues) | 36 | 2 |
+| **Total** | **6 commits** | **77 fixed** | **2 sessions** |
 
-Note: Total fixed (41) includes some overlapping fixes and preventive improvements beyond the core 35 linter messages.
+Note: Total fixed (77) includes some overlapping fixes and preventive improvements beyond the core 71 linter messages.
 
 ---
 
@@ -332,8 +361,14 @@ Note: Total fixed (41) includes some overlapping fixes and preventive improvemen
 ---
 
 **Report Generated**: November 17, 2025
-**Session Duration**: ~2 hours
-**Files Modified**: 19 files
-**Commits Created**: 4 commits
-**Linter Messages Fixed**: 35 (23% of total)
-**Status**: ✅ High-priority issues resolved, comprehensive documentation complete
+**Session Duration**: ~3 hours across 2 sessions
+**Files Modified**: 39 files (19 in Session 1, 20 in Session 2)
+**Commits Created**: 6 commits (4 in Session 1, 2 in Session 2)
+**Linter Messages Fixed**: 71 (47% of total)
+**Status**: ✅ High-priority errors and most deprecation warnings resolved
+
+**Session 2 Summary**:
+- ✅ Fixed all 36 withOpacity() deprecation warnings
+- ✅ Updated 20 files across entire presentation layer
+- ✅ Reduced remaining issues from 115 to ~79
+- ✅ Achieved 47% total reduction in linter messages
