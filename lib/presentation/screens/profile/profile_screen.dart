@@ -8,6 +8,7 @@ import '../../providers/user_provider.dart';
 import '../../widgets/common/loading_indicator.dart';
 import 'edit_profile_screen.dart';
 import '../settings/settings_screen.dart';
+import '../progress/progress_screen.dart';
 import '../auth/login_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -173,7 +174,11 @@ class ProfileScreen extends StatelessWidget {
                   icon: Icons.show_chart,
                   title: AppStrings.progress,
                   onTap: () {
-                    // TODO: Navigate to progress
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const ProgressScreen(),
+                      ),
+                    );
                   },
                 ),
                 _buildMenuOption(
