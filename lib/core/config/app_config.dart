@@ -1,3 +1,7 @@
+library;
+
+import 'package:flutter/foundation.dart';
+
 /// Application configuration and environment variables
 ///
 /// This class manages all environment-specific configurations including
@@ -117,9 +121,9 @@ class AppConfig {
     }
 
     if (errors.isNotEmpty) {
-      print('⚠️ Configuration Errors:');
+      debugPrint('⚠️ Configuration Errors:');
       for (final error in errors) {
-        print('  - $error');
+        debugPrint('  - $error');
       }
       return false;
     }
@@ -129,17 +133,17 @@ class AppConfig {
 
   /// Prints current configuration (safe for logging)
   static void printConfig() {
-    print('═══════════════════════════════════════');
-    print('🔧 Mealee App Configuration');
-    print('═══════════════════════════════════════');
-    print('Environment: $environment');
-    print('App Version: $appVersion ($buildNumber)');
-    print('Firebase Project: $firebaseProjectId');
-    print('AI Enabled: $enableAI');
-    print('Gemini API Key: ${hasGeminiApiKey ? "✓ Configured" : "✗ Missing"}');
-    print('Offline Mode: $enableOfflineMode');
-    print('Analytics: $enableAnalytics');
-    print('Crash Reporting: $enableCrashReporting');
-    print('═══════════════════════════════════════');
+    debugPrint('═══════════════════════════════════════');
+    debugPrint('🔧 Mealee App Configuration');
+    debugPrint('═══════════════════════════════════════');
+    debugPrint('Environment: $environment');
+    debugPrint('App Version: $appVersion ($buildNumber)');
+    debugPrint('Firebase Project: $firebaseProjectId');
+    debugPrint('AI Enabled: $enableAI');
+    debugPrint('Gemini API Key: ${hasGeminiApiKey ? "✓ Configured" : "✗ Missing"}');
+    debugPrint('Offline Mode: $enableOfflineMode');
+    debugPrint('Analytics: $enableAnalytics');
+    debugPrint('Crash Reporting: $enableCrashReporting');
+    debugPrint('═══════════════════════════════════════');
   }
 }

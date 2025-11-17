@@ -71,7 +71,7 @@ class ErrorHandler {
     if (kDebugMode) {
       debugPrint('');
       debugPrint('═══════════════════════════════════════');
-      debugPrint('${isFatal ? "🔴 FATAL ERROR" : "⚠️  ERROR"}');
+      debugPrint(isFatal ? "🔴 FATAL ERROR" : "⚠️  ERROR");
       debugPrint('═══════════════════════════════════════');
       debugPrint('Context: ${errorInfo.context ?? "Unknown"}');
       debugPrint('Type: ${errorInfo.errorType}');
@@ -277,23 +277,6 @@ class _ErrorBoundaryState extends State<ErrorBoundary> {
             },
           );
     }
-
-    return ErrorWidget.builder = (FlutterErrorDetails details) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          setState(() {
-            _error = details.exception;
-          });
-          widget.onError?.call(details.exception, details.stack ?? StackTrace.empty);
-          ErrorHandler.handleError(
-            details.exception,
-            details.stack,
-            context: 'ErrorBoundary',
-          );
-        }
-      });
-      return const SizedBox.shrink();
-    };
 
     return widget.child;
   }

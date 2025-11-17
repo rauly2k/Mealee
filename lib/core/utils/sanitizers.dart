@@ -113,7 +113,7 @@ class Sanitizers {
     // Ensure only one decimal point
     final parts = cleaned.split('.');
     if (parts.length > 2) {
-      cleaned = parts[0] + '.' + parts.sublist(1).join('');
+      cleaned = '${parts[0]}.${parts.sublist(1).join('')}';
     }
 
     return double.tryParse(cleaned) ?? defaultValue;
@@ -128,7 +128,7 @@ class Sanitizers {
 
   /// Rounds to specified decimal places
   static double roundTo(double value, int decimals) {
-    final multiplier = 10.0 * decimals;
+    final multiplier = decimals == 0 ? 1.0 : (decimals == 1 ? 10.0 : decimals == 2 ? 100.0 : 1000.0);
     return (value * multiplier).round() / multiplier;
   }
 
@@ -274,7 +274,7 @@ class Sanitizers {
   static bool containsSqlInjection(String input) {
     final sqlPatterns = [
       RegExp(r"(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|EXECUTE)\b)", caseSensitive: false),
-      RegExp(r"(--|\;|'|\"|\*|\/\*)"),
+      RegExp(r"(--|;|'|""|\\*|/\\*)"),
       RegExp(r"(\bOR\b.*=|1=1)", caseSensitive: false),
     ];
 
