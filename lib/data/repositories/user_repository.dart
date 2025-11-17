@@ -77,6 +77,23 @@ class UserRepository {
     }
   }
 
+  /// Update user display name
+  Future<void> updateDisplayName(String userId, String displayName) async {
+    try {
+      await _firebaseService.usersCollection.doc(userId).update({
+        'displayName': displayName,
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+      // Also update in Firebase Auth if available
+      final currentUser = _firebaseService.auth.currentUser;
+      if (currentUser != null && currentUser.uid == userId) {
+        await currentUser.updateDisplayName(displayName);
+      }
+    } catch (e) {
+      throw Exception('Eroare la actualizarea numelui: $e');
+    }
+  }
+
   /// Update user goals
   Future<void> updateGoals(String userId, UserGoals goals) async {
     try {

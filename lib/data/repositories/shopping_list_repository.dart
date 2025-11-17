@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/shopping_list_model.dart';
 import '../services/firebase_service.dart';
 

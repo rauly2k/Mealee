@@ -67,6 +67,19 @@ class LocalStorageService {
   Future<bool> setNotificationsEnabled(bool value) =>
       prefs.setBool(keyNotificationsEnabled, value);
 
+  // Generic getters and setters
+  bool? getBool(String key) => prefs.getBool(key);
+  Future<bool> setBool(String key, bool value) => prefs.setBool(key, value);
+
+  String? getString(String key) => prefs.getString(key);
+  Future<bool> setString(String key, String value) => prefs.setString(key, value);
+
+  int? getInt(String key) => prefs.getInt(key);
+  Future<bool> setInt(String key, int value) => prefs.setInt(key, value);
+
+  double? getDouble(String key) => prefs.getDouble(key);
+  Future<bool> setDouble(String key, double value) => prefs.setDouble(key, value);
+
   // Clear all data
   Future<bool> clearAll() => prefs.clear();
 

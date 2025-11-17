@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../core/constants/app_colors.dart';
 
 class CustomTextField extends StatefulWidget {
   final TextEditingController? controller;
@@ -23,6 +22,9 @@ class CustomTextField extends StatefulWidget {
   final TextCapitalization textCapitalization;
   final bool autofocus;
   final FocusNode? focusNode;
+  // Aliases for backward compatibility
+  final String? label;
+  final String? hint;
 
   const CustomTextField({
     super.key,
@@ -46,6 +48,9 @@ class CustomTextField extends StatefulWidget {
     this.textCapitalization = TextCapitalization.none,
     this.autofocus = false,
     this.focusNode,
+    // Aliases for backward compatibility
+    this.label,
+    this.hint,
   });
 
   @override
@@ -55,6 +60,10 @@ class CustomTextField extends StatefulWidget {
 class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
+    // Use alias if provided, otherwise use original parameter
+    final effectiveLabelText = widget.label ?? widget.labelText;
+    final effectiveHintText = widget.hint ?? widget.hintText;
+
     return TextFormField(
       controller: widget.controller,
       obscureText: widget.obscureText,
@@ -72,8 +81,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
       autofocus: widget.autofocus,
       focusNode: widget.focusNode,
       decoration: InputDecoration(
-        labelText: widget.labelText,
-        hintText: widget.hintText,
+        labelText: effectiveLabelText,
+        hintText: effectiveHintText,
         helperText: widget.helperText,
         prefixIcon: widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
         suffixIcon: widget.suffixIcon,
