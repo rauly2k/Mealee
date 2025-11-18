@@ -456,7 +456,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   Widget _buildNutritionTab(NutritionInfo nutrition) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: NutritionInfoCard(nutrition: nutrition),
+      child: NutritionInfoCard(nutrition: nutrition, compact: false,),
     );
   }
 

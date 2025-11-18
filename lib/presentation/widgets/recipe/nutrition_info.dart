@@ -8,7 +8,7 @@ class NutritionInfoCard extends StatelessWidget {
 
   const NutritionInfoCard({
     super.key,
-    required this.nutrition,
+    required this.nutrition, required bool compact,
   });
 
   @override

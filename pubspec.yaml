@@ -16,13 +16,13 @@ dependencies:
   provider: ^6.1.1
 
   # Firebase
-  firebase_core: ^2.24.2
-  firebase_auth: ^4.16.0
-  cloud_firestore: ^4.14.0
-  firebase_storage: ^11.6.0
+  firebase_core: ^4.2.1
+  firebase_auth: ^6.1.2
+  cloud_firestore: ^6.1.0
+  firebase_storage: ^13.0.4
 
   # Google Sign-In
-  google_sign_in: ^6.2.1
+  google_sign_in: ^7.2.0
 
   # Local Storage
   sqflite: ^2.3.0
@@ -30,9 +30,9 @@ dependencies:
   path_provider: ^2.1.1
 
   # Network & API
-  http: ^1.2.0
+  http: ^1.6.0
   dio: ^5.4.0
-  google_generative_ai: ^0.2.2
+  google_generative_ai: ^0.4.7
 
   # UI & Animations
   cupertino_icons: ^1.0.8
@@ -42,11 +42,11 @@ dependencies:
   lottie: ^3.0.0
 
   # Forms & Validation
-  email_validator: ^2.1.17
+  email_validator: ^3.0.0
 
   # Image Handling
-  image_picker: ^1.0.7
-  image_cropper: ^5.0.1
+  image_picker: ^1.2.1
+  image_cropper: ^11.0.0
 
   # Charts
   fl_chart: ^0.66.0
@@ -64,7 +64,7 @@ dependencies:
   google_mlkit_barcode_scanning: ^0.10.0
 
   # Notifications
-  flutter_local_notifications: ^16.3.0
+  flutter_local_notifications: ^17.0.0
 
   # PDF Generation (for premium features)
   pdf: ^3.10.8

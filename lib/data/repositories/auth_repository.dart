@@ -7,7 +7,7 @@ import 'user_repository.dart';
 class AuthRepository {
   final FirebaseService _firebaseService = FirebaseService.instance;
   final UserRepository _userRepository = UserRepository();
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
   // Get current user
   User? get currentUser => _firebaseService.currentUser;
@@ -74,7 +74,7 @@ class AuthRepository {
   Future<User?> signInWithGoogle() async {
     try {
       // Trigger the Google Sign In flow
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAccount? googleUser = await _googleSignIn.authenticate();
 
       if (googleUser == null) {
         // User canceled the sign-in
@@ -87,7 +87,7 @@ class AuthRepository {
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
+        accessToken: googleAuth.idToken,
         idToken: googleAuth.idToken,
       );
 
@@ -157,7 +157,9 @@ class AuthRepository {
       final user = currentUser;
       if (user == null) throw Exception('Nu există utilizator autentificat');
 
-      await user.updateEmail(newEmail);
+      // Use verifyBeforeUpdateEmail for better security
+      // This sends a verification email before updating
+      await user.verifyBeforeUpdateEmail(newEmail);
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     }

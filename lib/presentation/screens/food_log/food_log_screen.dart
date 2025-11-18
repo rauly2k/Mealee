@@ -145,7 +145,7 @@ class _FoodLogScreenState extends State<FoodLogScreen> {
 
                   // Nutrition summary
                   if (goals != null) ...[
-                    NutritionInfoCard(nutrition: nutrition),
+                    NutritionInfoCard(nutrition: nutrition, compact: false,),
                     const SizedBox(height: 8),
                     Card(
                       child: Padding(
