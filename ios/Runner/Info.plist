@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Aplicația are nevoie de acces la cameră pentru a scana alimentele și rețetele</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Aplicația are nevoie de acces la fotografii pentru a selecta imagini cu alimente</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Aplicația dorește să salveze fotografii în galeria ta</string>
 </dict>
 </plist>

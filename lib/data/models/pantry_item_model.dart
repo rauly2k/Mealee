@@ -92,6 +92,11 @@ class PantryItemModel extends Equatable {
     return expiryDate!.isBefore(threeDaysFromNow) && !isExpired;
   }
 
+  // Backward compatibility getters
+  String get itemId => pantryItemId;
+  String get name => ingredientName;
+  DateTime get addedAt => addedDate;
+
   @override
   List<Object?> get props => [
         pantryItemId,
