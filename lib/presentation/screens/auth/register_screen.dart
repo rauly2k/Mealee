@@ -4,6 +4,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/utils/validators.dart';
 import '../../providers/auth_provider.dart';
+import '../main_navigation.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -42,11 +43,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (mounted) {
         if (success) {
-          // TODO: Navigate to profile setup/onboarding
+          // Navigate to main app after successful registration
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Cont creat cu succes!')),
           );
-          Navigator.of(context).pop();
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const MainNavigation()),
+            (route) => false,
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
