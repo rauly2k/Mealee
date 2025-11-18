@@ -4,13 +4,14 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/constants/example_recipes.dart';
 import '../../../core/utils/helpers.dart';
-import '../../../data/services/gemini_service.dart';
+import '../../../data/models/recipe_model.dart';
 import '../../providers/user_provider.dart';
 import '../../providers/food_log_provider.dart';
 import '../../providers/recipe_provider.dart';
 import '../../widgets/common/loading_indicator.dart';
 import '../../widgets/recipe/nutrition_info.dart';
 import '../../widgets/recipe/recipe_card.dart';
+import '../ai_recipe_generator/ai_recipe_generator_screen.dart';
 import '../food_log/food_log_screen.dart';
 import '../recipes/recipe_detail_screen.dart';
 
@@ -23,9 +24,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _whatToEatController = TextEditingController();
-  final _ingredientsController = TextEditingController();
-  bool _isGeneratingRecipes = false;
-  List<String> _aiSuggestions = [];
+  bool _isSearchingRecipes = false;
+  List<RecipeModel> _quickSearchResults = [];
 
   @override
   void initState() {
@@ -40,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _whatToEatController.dispose();
-    _ingredientsController.dispose();
     super.dispose();
   }
 
@@ -57,11 +56,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _generateRecipeSuggestions() async {
-    if (_ingredientsController.text.trim().isEmpty) {
+  Future<void> _quickSearchRecipes() async {
+    final searchTerm = _whatToEatController.text.trim();
+    if (searchTerm.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Te rog introdu cel puțin un ingredient'),
+          content: Text('Te rog introdu ce ai vrea să mănânci'),
           backgroundColor: AppColors.warning,
         ),
       );
@@ -69,19 +69,29 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     setState(() {
-      _isGeneratingRecipes = true;
-      _aiSuggestions = [];
+      _isSearchingRecipes = true;
+      _quickSearchResults = [];
     });
 
     try {
-      final geminiService = GeminiService();
-      final suggestions = await geminiService.suggestRecipes(
-        ingredients: _ingredientsController.text.split(','), availableIngredients: [],
-      );
+      final recipeProvider = context.read<RecipeProvider>();
+      final results = await recipeProvider.searchRecipesByQuery(searchTerm);
 
       setState(() {
-        _aiSuggestions = suggestions.cast<String>();
+        // Get top 10 results
+        _quickSearchResults = results.take(10).toList();
       });
+
+      if (_quickSearchResults.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Nu am găsit rețete potrivite. Încearcă alte cuvinte cheie!'),
+              backgroundColor: AppColors.info,
+            ),
+          );
+        }
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -93,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } finally {
       setState(() {
-        _isGeneratingRecipes = false;
+        _isSearchingRecipes = false;
       });
     }
   }
@@ -208,7 +218,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: const Icon(
-                                  Icons.auto_awesome,
+                                  Icons.search,
                                   color: AppColors.textOnPrimary,
                                   size: 24,
                                 ),
@@ -219,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Generează Rețete AI',
+                                      'Căutare Rapidă Rețete',
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge
@@ -229,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                     ),
                                     Text(
-                                      'Sugestii personalizate bazate pe ingrediente',
+                                      'Găsește instant rețete din baza de date',
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodySmall
@@ -246,8 +256,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           TextField(
                             controller: _whatToEatController,
                             decoration: InputDecoration(
-                              labelText: 'Ce ai vrea să mănânci? (opțional)',
-                              hintText: 'Ex: ceva tradițional românesc',
+                              labelText: 'Ce ai vrea să mănânci?',
+                              hintText: 'Ex: paste carbonara, sarmale, plăcintă cu brânză',
                               prefixIcon: const Icon(Icons.restaurant_menu),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -255,61 +265,76 @@ class _HomeScreenState extends State<HomeScreen> {
                               filled: true,
                               fillColor: AppColors.surface,
                             ),
-                          ),
-                          const SizedBox(height: 12),
-                          TextField(
-                            controller: _ingredientsController,
-                            decoration: InputDecoration(
-                              labelText: 'Ce ingrediente ai? *',
-                              hintText: 'Ex: pui, orez, legume',
-                              prefixIcon: const Icon(Icons.kitchen),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              filled: true,
-                              fillColor: AppColors.surface,
-                            ),
-                            maxLines: 2,
+                            onSubmitted: (_) => _quickSearchRecipes(),
                           ),
                           const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  onPressed:
+                                      _isSearchingRecipes ? null : _quickSearchRecipes,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.secondary,
+                                    foregroundColor: AppColors.textOnPrimary,
+                                    padding: const EdgeInsets.symmetric(vertical: 14),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  icon: _isSearchingRecipes
+                                      ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor: AlwaysStoppedAnimation<Color>(
+                                              AppColors.textOnPrimary,
+                                            ),
+                                          ),
+                                        )
+                                      : const Icon(Icons.search),
+                                  label: Text(
+                                    _isSearchingRecipes
+                                        ? 'Caut...'
+                                        : 'Caută Rețete',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
                           SizedBox(
                             width: double.infinity,
-                            child: ElevatedButton.icon(
-                              onPressed:
-                                  _isGeneratingRecipes ? null : _generateRecipeSuggestions,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.secondary,
-                                foregroundColor: AppColors.textOnPrimary,
+                            child: OutlinedButton.icon(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const AIRecipeGeneratorScreen(),
+                                  ),
+                                );
+                              },
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: AppColors.secondary,
                                 padding: const EdgeInsets.symmetric(vertical: 14),
+                                side: const BorderSide(
+                                  color: AppColors.secondary,
+                                  width: 2,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              icon: _isGeneratingRecipes
-                                  ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                          AppColors.textOnPrimary,
-                                        ),
-                                      ),
-                                    )
-                                  : const Icon(Icons.auto_awesome),
-                              label: Text(
-                                _isGeneratingRecipes
-                                    ? 'Generez...'
-                                    : 'Generează Sugestii',
-                              ),
+                              icon: const Icon(Icons.auto_awesome),
+                              label: const Text('Generator AI Avansat'),
                             ),
                           ),
-                          if (_aiSuggestions.isNotEmpty) ...[
+                          if (_quickSearchResults.isNotEmpty) ...[
                             const SizedBox(height: 16),
                             const Divider(),
                             const SizedBox(height: 8),
                             Text(
-                              '🎯 Sugestii AI:',
+                              '🎯 Rezultate căutare (${_quickSearchResults.length}):',
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium
@@ -317,39 +342,39 @@ class _HomeScreenState extends State<HomeScreen> {
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
-                            const SizedBox(height: 8),
-                            ..._aiSuggestions.map((suggestion) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 8.0),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.surface,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: AppColors.secondary
-                                            .withValues(alpha: 0.3),
-                                      ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.lightbulb_outline,
-                                          color: AppColors.secondary,
-                                          size: 20,
+                            const SizedBox(height: 12),
+                            SizedBox(
+                              height: 280,
+                              child: Consumer<RecipeProvider>(
+                                builder: (context, recipeProvider, _) {
+                                  return ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: _quickSearchResults.length,
+                                    itemBuilder: (context, index) {
+                                      final recipe = _quickSearchResults[index];
+                                      return Container(
+                                        width: 300,
+                                        margin: const EdgeInsets.only(right: 16),
+                                        child: RecipeCard(
+                                          recipe: recipe,
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (_) =>
+                                                    RecipeDetailScreen(recipe: recipe),
+                                              ),
+                                            );
+                                          },
+                                          onFavorite: () {
+                                            recipeProvider.toggleFavorite(recipe.recipeId);
+                                          },
                                         ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            suggestion,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
                           ],
                         ],
                       ),

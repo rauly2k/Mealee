@@ -79,6 +79,15 @@ class RecipeProvider with ChangeNotifier {
     }
   }
 
+  /// Search recipes and return results without updating state (for quick search)
+  Future<List<RecipeModel>> searchRecipesByQuery(String searchTerm) async {
+    try {
+      return await _recipeRepository.searchRecipes(searchTerm);
+    } catch (e) {
+      throw Exception('Eroare la căutarea rețetelor: $e');
+    }
+  }
+
   /// Load popular recipes
   Future<void> loadPopularRecipes() async {
     try {

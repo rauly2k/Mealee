@@ -30,6 +30,7 @@ class AppRoutes {
   static const String recipeDetail = '/recipes/detail';
   static const String recipeSearch = '/recipes/search';
   static const String favoriteRecipes = '/recipes/favorites';
+  static const String aiRecipeGenerator = '/ai-recipe-generator';
 
   // Meal Plans
   static const String mealPlans = '/meal-plans';
