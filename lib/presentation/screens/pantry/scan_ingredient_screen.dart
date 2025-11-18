@@ -128,13 +128,18 @@ class _ScanIngredientScreenState extends State<ScanIngredientScreen> {
 
       final quantity = double.tryParse(_quantityController.text) ?? 1.0;
 
-      await pantryProvider.addItem(
+      final newItem = PantryItemModel(
+        pantryItemId: '', // Firestore will generate this
         userId: userProvider.currentUser!.userId,
-        name: _nameController.text.trim(),
+        ingredientName: _nameController.text.trim(),
         quantity: quantity,
         unit: _selectedUnit,
+        addedDate: DateTime.now(),
+        source: 'manual',
         category: 'general',
       );
+
+      await pantryProvider.addPantryItem(newItem);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

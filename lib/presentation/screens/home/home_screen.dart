@@ -76,14 +76,11 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final geminiService = GeminiService();
       final suggestions = await geminiService.suggestRecipes(
-        availableIngredients: _ingredientsController.text.split(','),
-        preferences: _whatToEatController.text.isNotEmpty
-            ? _whatToEatController.text
-            : null,
+        ingredients: _ingredientsController.text.split(','), availableIngredients: [],
       );
 
       setState(() {
-        _aiSuggestions = suggestions;
+        _aiSuggestions = suggestions.cast<String>();
       });
     } catch (e) {
       if (mounted) {

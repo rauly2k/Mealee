@@ -118,7 +118,7 @@ class _ManualFoodEntryScreenState extends State<ManualFoodEntryScreen> {
     try {
       final geminiService = GeminiService();
       final analysisResult = await geminiService.analyzeFoodFromImage(
-        _selectedImage!.path,
+        _selectedImage!.path as Uint8List,
       );
 
       // Parse the analysis result and populate fields

@@ -126,7 +126,7 @@ Formatează răspunsul ca JSON valid.
   Future<List<Map<String, dynamic>>> suggestRecipes({
     required List<String> ingredients,
     List<String> dietaryRestrictions = const [],
-    int? maxCalories,
+    int? maxCalories, required List<String> availableIngredients, String? preferences,
   }) async {
     try {
       final restrictionsText = dietaryRestrictions.isNotEmpty
