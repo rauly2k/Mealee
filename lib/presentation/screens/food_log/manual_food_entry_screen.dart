@@ -1,9 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../data/models/food_log_model.dart';
 import '../../../data/models/recipe_model.dart';
+import '../../../data/services/gemini_service.dart';
 import '../../providers/food_log_provider.dart';
 import '../../providers/user_provider.dart';
 import '../../widgets/common/custom_button.dart';
@@ -29,9 +32,12 @@ class _ManualFoodEntryScreenState extends State<ManualFoodEntryScreen> {
   final _proteinController = TextEditingController();
   final _carbsController = TextEditingController();
   final _fatsController = TextEditingController();
+  final _imagePicker = ImagePicker();
 
   String _selectedMealType = 'breakfast';
   bool _isLoading = false;
+  bool _isAnalyzing = false;
+  File? _selectedImage;
 
   @override
   void initState() {
@@ -50,6 +56,124 @@ class _ManualFoodEntryScreenState extends State<ManualFoodEntryScreen> {
     _carbsController.dispose();
     _fatsController.dispose();
     super.dispose();
+  }
+
+  Future<void> _takePicture() async {
+    try {
+      final pickedFile = await _imagePicker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 70,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImage = File(pickedFile.path);
+        });
+        _analyzeImage();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Eroare la deschiderea camerei: ${e.toString()}'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _pickFromGallery() async {
+    try {
+      final pickedFile = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 70,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImage = File(pickedFile.path);
+        });
+        _analyzeImage();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Eroare la selectarea imaginii: ${e.toString()}'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _analyzeImage() async {
+    if (_selectedImage == null) return;
+
+    setState(() {
+      _isAnalyzing = true;
+    });
+
+    try {
+      final geminiService = GeminiService();
+      final analysisResult = await geminiService.analyzeFoodFromImage(
+        _selectedImage!.path,
+      );
+
+      // Parse the analysis result and populate fields
+      // The result is a Map with keys: foodItems, estimatedCalories, protein, carbs, fats
+      if (analysisResult.containsKey('foodItems') &&
+          analysisResult['foodItems'] is List &&
+          (analysisResult['foodItems'] as List).isNotEmpty) {
+        final foodItems = analysisResult['foodItems'] as List;
+        _foodNameController.text = foodItems.join(', ');
+      }
+
+      if (analysisResult.containsKey('estimatedCalories')) {
+        _caloriesController.text =
+            analysisResult['estimatedCalories'].toString();
+      }
+
+      if (analysisResult.containsKey('protein')) {
+        _proteinController.text = analysisResult['protein'].toString();
+      }
+
+      if (analysisResult.containsKey('carbs')) {
+        _carbsController.text = analysisResult['carbs'].toString();
+      }
+
+      if (analysisResult.containsKey('fats')) {
+        _fatsController.text = analysisResult['fats'].toString();
+      }
+
+      if (analysisResult.containsKey('portion')) {
+        _portionSizeController.text = analysisResult['portion'].toString();
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✨ Analiza AI completă! Verifică și ajustează valorile.'),
+            backgroundColor: AppColors.success,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Eroare la analiză: ${e.toString()}'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    } finally {
+      setState(() {
+        _isAnalyzing = false;
+      });
+    }
   }
 
   Future<void> _saveEntry() async {
@@ -132,13 +256,157 @@ class _ManualFoodEntryScreenState extends State<ManualFoodEntryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Adaugă aliment manual'),
+        title: const Text('Înregistrează masă'),
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.textOnPrimary,
       ),
       body: Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            // Photo capture section with beautiful design
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.accent.withValues(alpha: 0.1),
+                    AppColors.secondary.withValues(alpha: 0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: AppColors.accent.withValues(alpha: 0.3),
+                  width: 2,
+                ),
+              ),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.accent,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.camera_alt,
+                          color: AppColors.textOnPrimary,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Analiză AI cu Cameră',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.accent,
+                                  ),
+                            ),
+                            Text(
+                              'Fă o poză mesei tale pentru analiză automată',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: AppColors.textSecondary,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  if (_selectedImage != null) ...[
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.file(
+                        _selectedImage!,
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    if (_isAnalyzing)
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.info.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Row(
+                          children: [
+                            SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Analizez imaginea cu AI...',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _isAnalyzing ? null : _takePicture,
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: AppColors.accent),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          icon: const Icon(Icons.camera_alt),
+                          label: const Text('Cameră'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _isAnalyzing ? null : _pickFromGallery,
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: AppColors.accent),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          icon: const Icon(Icons.photo_library),
+                          label: const Text('Galerie'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Manual entry section
+            Text(
+              'Sau introdu manual:',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 16),
+
             // Food name
             CustomTextField(
               controller: _foodNameController,
@@ -283,7 +551,7 @@ class _ManualFoodEntryScreenState extends State<ManualFoodEntryScreen> {
                 return null;
               },
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
 
             // Info card
             Card(
@@ -293,14 +561,14 @@ class _ManualFoodEntryScreenState extends State<ManualFoodEntryScreen> {
                 child: Row(
                   children: [
                     const Icon(
-                      Icons.info_outline,
+                      Icons.lightbulb_outline,
                       color: AppColors.info,
                       size: 20,
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Poți găsi informațiile nutriționale pe ambalajul alimentelor sau în aplicații dedicate.',
+                        'Folosește camera pentru analiză automată AI sau introdu manual valorile de pe ambalaj.',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: AppColors.textSecondary,
                             ),
@@ -318,6 +586,7 @@ class _ManualFoodEntryScreenState extends State<ManualFoodEntryScreen> {
               onPressed: _isLoading ? null : _saveEntry,
               isLoading: _isLoading,
             ),
+            const SizedBox(height: 16),
           ],
         ),
       ),

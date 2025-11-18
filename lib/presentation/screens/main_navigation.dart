@@ -4,7 +4,7 @@ import '../../core/constants/app_strings.dart';
 import 'home/home_screen.dart';
 import 'recipes/recipes_list_screen.dart';
 import 'meal_plans/meal_plans_screen.dart';
-import 'pantry/pantry_screen.dart';
+import 'shopping_list/shopping_list_screen.dart';
 import 'profile/profile_screen.dart';
 
 class MainNavigation extends StatefulWidget {
@@ -21,7 +21,7 @@ class _MainNavigationState extends State<MainNavigation> {
     HomeScreen(),
     RecipesListScreen(),
     MealPlansScreen(),
-    PantryScreen(),
+    ShoppingListScreen(),
     ProfileScreen(),
   ];
 
@@ -59,9 +59,9 @@ class _MainNavigationState extends State<MainNavigation> {
             label: AppStrings.mealPlans,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.kitchen_outlined),
-            activeIcon: Icon(Icons.kitchen),
-            label: AppStrings.pantry,
+            icon: Icon(Icons.shopping_cart_outlined),
+            activeIcon: Icon(Icons.shopping_cart),
+            label: 'Listă cumpărături',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),

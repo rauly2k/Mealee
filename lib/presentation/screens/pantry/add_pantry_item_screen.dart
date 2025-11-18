@@ -8,6 +8,7 @@ import '../../providers/pantry_provider.dart';
 import '../../providers/user_provider.dart';
 import '../../widgets/common/custom_button.dart';
 import '../../widgets/common/custom_text_field.dart';
+import 'scan_ingredient_screen.dart';
 
 class AddPantryItemScreen extends StatefulWidget {
   const AddPantryItemScreen({super.key});
@@ -129,6 +130,67 @@ class _AddPantryItemScreenState extends State<AddPantryItemScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            // Scan barcode option
+            Container(
+              margin: const EdgeInsets.only(bottom: 24),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.secondary.withValues(alpha: 0.1),
+                    AppColors.accent.withValues(alpha: 0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppColors.secondary.withValues(alpha: 0.3),
+                  width: 2,
+                ),
+              ),
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(12),
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondary,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.qr_code_scanner,
+                    color: AppColors.textOnPrimary,
+                  ),
+                ),
+                title: const Text(
+                  'Scanează Cod de Bare',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: const Text(
+                  'Folosește camera pentru a scana produsul',
+                  style: TextStyle(fontSize: 12),
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () async {
+                  final result = await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const ScanIngredientScreen(),
+                    ),
+                  );
+                  if (result == true && mounted) {
+                    Navigator.of(context).pop(true);
+                  }
+                },
+              ),
+            ),
+
+            Text(
+              'Sau adaugă manual:',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 16),
+
             // Name
             CustomTextField(
               controller: _nameController,
