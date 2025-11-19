@@ -8,6 +8,7 @@ import '../../../data/models/recipe_model.dart';
 import '../../providers/recipe_provider.dart';
 import '../../providers/food_log_provider.dart';
 import '../../providers/user_provider.dart';
+import '../../providers/shopping_list_provider.dart';
 import '../../widgets/recipe/nutrition_info.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
@@ -382,6 +383,25 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   ),
                 );
               }),
+              const SizedBox(height: 16),
+              const Divider(),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () => _addIngredientsToShoppingList(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.secondary,
+                    foregroundColor: AppColors.textOnPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  icon: const Icon(Icons.shopping_cart_outlined),
+                  label: const Text('Adaugă la lista de cumpărături'),
+                ),
+              ),
             ],
           ),
         ),
@@ -622,6 +642,59 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           SnackBar(
             content: Text(
               foodLogProvider.errorMessage ?? 'Eroare la înregistrare',
+            ),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _addIngredientsToShoppingList(BuildContext context) async {
+    final userProvider = context.read<UserProvider>();
+    final shoppingListProvider = context.read<ShoppingListProvider>();
+
+    if (userProvider.currentUser == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Trebuie să fii autentificat'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+      return;
+    }
+
+    // Load shopping lists if not already loaded
+    if (shoppingListProvider.activeList == null) {
+      await shoppingListProvider.loadShoppingLists(
+        userProvider.currentUser!.userId,
+      );
+    }
+
+    // Add recipe ingredients with aggregation
+    final success = await shoppingListProvider.addRecipeIngredientsToList(
+      userId: userProvider.currentUser!.userId,
+      recipe: widget.recipe,
+      portionMultiplier: _portionMultiplier,
+    );
+
+    if (mounted) {
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Ingrediente adăugate la lista de cumpărături! 🛒'),
+            backgroundColor: AppColors.success,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              shoppingListProvider.errorMessage ??
+                  'Eroare la adăugarea ingredientelor',
             ),
             backgroundColor: AppColors.error,
           ),
