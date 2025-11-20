@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import '../../core/utils/diet_rules.dart';
+import '../../core/utils/ingredient_matcher.dart';
 
 class RecipeModel extends Equatable {
   final String recipeId;
@@ -21,6 +23,10 @@ class RecipeModel extends Equatable {
   final DateTime createdAt;
   final bool isFavorite;
 
+  // NEW FIELDS for enhanced filtering and AI context
+  final List<String> dietFlags; // e.g., ['keto', 'low_carb', 'high_protein']
+  final List<String> ingredientKeywords; // Normalized ingredient keywords for search
+
   const RecipeModel({
     required this.recipeId,
     required this.title,
@@ -40,6 +46,8 @@ class RecipeModel extends Equatable {
     required this.createdBy,
     required this.createdAt,
     this.isFavorite = false,
+    this.dietFlags = const [],
+    this.ingredientKeywords = const [],
   });
 
   factory RecipeModel.fromFirestore(DocumentSnapshot doc) {
@@ -66,6 +74,8 @@ class RecipeModel extends Equatable {
       createdBy: data['createdBy'] ?? 'admin',
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       isFavorite: data['isFavorite'] ?? false,
+      dietFlags: List<String>.from(data['dietFlags'] ?? []),
+      ingredientKeywords: List<String>.from(data['ingredientKeywords'] ?? []),
     );
   }
 
@@ -87,6 +97,8 @@ class RecipeModel extends Equatable {
       'cuisine': cuisine,
       'createdBy': createdBy,
       'createdAt': Timestamp.fromDate(createdAt),
+      'dietFlags': dietFlags,
+      'ingredientKeywords': ingredientKeywords,
     };
   }
 
@@ -109,6 +121,8 @@ class RecipeModel extends Equatable {
     String? createdBy,
     DateTime? createdAt,
     bool? isFavorite,
+    List<String>? dietFlags,
+    List<String>? ingredientKeywords,
   }) {
     return RecipeModel(
       recipeId: recipeId ?? this.recipeId,
@@ -129,6 +143,22 @@ class RecipeModel extends Equatable {
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
       isFavorite: isFavorite ?? this.isFavorite,
+      dietFlags: dietFlags ?? this.dietFlags,
+      ingredientKeywords: ingredientKeywords ?? this.ingredientKeywords,
+    );
+  }
+
+  /// Compute and return a new recipe with updated dietFlags and ingredientKeywords
+  /// This should be called before saving a recipe to Firestore
+  RecipeModel computeFlags() {
+    final detectedDietFlags = DietRules.detectDietFlags(this);
+    final extractedKeywords = IngredientMatcher.extractKeywords(
+      ingredients.map((i) => i.name).toList(),
+    );
+
+    return copyWith(
+      dietFlags: detectedDietFlags,
+      ingredientKeywords: extractedKeywords,
     );
   }
 
@@ -152,6 +182,8 @@ class RecipeModel extends Equatable {
         createdBy,
         createdAt,
         isFavorite,
+        dietFlags,
+        ingredientKeywords,
       ];
 }
 

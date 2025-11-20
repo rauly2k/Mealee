@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import '../models/user_model.dart';
+import '../models/food_log_model.dart';
+import 'ai_context_service.dart';
 
 class GeminiService {
   static const String _apiKey = 'YOUR_GEMINI_API_KEY_HERE'; // TODO: Move to environment variables
@@ -300,6 +303,144 @@ Oferă sfaturi practice și accesibile, folosind exemple din bucătăria române
       return response.text ?? 'Nu am putut genera un răspuns';
     } catch (e) {
       throw Exception('Eroare în conversație: $e');
+    }
+  }
+
+  // ============== NEW METHODS WITH AI CONTEXT SERVICE ==============
+
+  /// Generate personalized recipe suggestions using full user context
+  Future<List<Map<String, dynamic>>> suggestRecipesWithContext({
+    required UserModel user,
+    required List<String> availableIngredients,
+    String? mealType,
+    int numberOfRecipes = 5,
+    List<FoodLogModel>? recentMeals,
+  }) async {
+    try {
+      final prompt = AIContextService.buildRecipeSuggestionPrompt(
+        user: user,
+        availableIngredients: availableIngredients,
+        mealType: mealType,
+        numberOfRecipes: numberOfRecipes,
+        recentMeals: recentMeals,
+      );
+
+      final content = [Content.text(prompt)];
+      final response = await _model.generateContent(content);
+      final text = response.text ?? '';
+
+      // Extract JSON from response
+      final jsonMatch = RegExp(r'\{[\s\S]*\}').firstMatch(text);
+      if (jsonMatch != null) {
+        final jsonStr = jsonMatch.group(0)!;
+        final data = json.decode(jsonStr) as Map<String, dynamic>;
+        return List<Map<String, dynamic>>.from(data['recipes'] ?? []);
+      }
+
+      return [];
+    } catch (e) {
+      throw Exception('Eroare la generarea rețetelor: $e');
+    }
+  }
+
+  /// Generate a personalized meal plan using full user context
+  Future<String> generateMealPlanWithContext({
+    required UserModel user,
+    required int days,
+    List<FoodLogModel>? recentMeals,
+  }) async {
+    try {
+      final prompt = AIContextService.buildMealPlanPrompt(
+        user: user,
+        days: days,
+        recentMeals: recentMeals,
+      );
+
+      final content = [Content.text(prompt)];
+      final response = await _model.generateContent(content);
+
+      return response.text ?? 'Nu s-a putut genera planul de mese';
+    } catch (e) {
+      throw Exception('Eroare la generarea planului de mese: $e');
+    }
+  }
+
+  /// Get personalized nutritional advice using full user context
+  Future<String> getNutritionalAdviceWithContext({
+    required UserModel user,
+    required String question,
+    List<FoodLogModel>? recentMeals,
+  }) async {
+    try {
+      final prompt = AIContextService.buildNutritionalAdvicePrompt(
+        user: user,
+        question: question,
+        recentMeals: recentMeals,
+      );
+
+      final content = [Content.text(prompt)];
+      final response = await _model.generateContent(content);
+
+      return response.text ?? 'Nu am putut genera un răspuns';
+    } catch (e) {
+      throw Exception('Eroare la obținerea sfatului nutrițional: $e');
+    }
+  }
+
+  /// Get personalized meal suggestions for a specific meal type
+  Future<String> getPersonalizedMealSuggestions({
+    required UserModel user,
+    required String mealType,
+    List<FoodLogModel>? recentMeals,
+  }) async {
+    try {
+      final context = AIContextService.buildUserContext(
+        user: user,
+        recentMeals: recentMeals,
+        includeNutritionalTargets: true,
+        includeFoodPreferences: true,
+        includeRecentMeals: true,
+      );
+
+      final mealTypeText = {
+        'breakfast': 'micul dejun',
+        'lunch': 'prânz',
+        'dinner': 'cină',
+        'snacks': 'gustări',
+      }[mealType] ?? mealType;
+
+      final caloriesPerMeal = user.goals != null
+          ? (user.goals!.calorieTarget / 4).toStringAsFixed(0)
+          : '500';
+
+      final prompt = '''
+$context
+
+SARCINĂ: Sugerează 3 opțiuni sănătoase și personalizate pentru $mealTypeText.
+Buget caloric per masă: aproximativ $caloriesPerMeal calorii.
+
+CERINȚE IMPORTANTE:
+1. Respectă STRICT toate alergiile și restricțiile utilizatorului
+2. Prioritizează ingredientele preferate
+3. Evită ingredientele pe care utilizatorul nu le place
+4. Ia în considerare obiectivele de sănătate
+5. Oferă varietate (evită repetarea meselor recente)
+
+Pentru fiecare opțiune, include:
+- Numele mesei
+- Lista de ingrediente
+- Informații nutriționale (calorii, proteine, carbohidrați, grăsimi)
+- De ce această masă este potrivită pentru utilizator
+
+Răspunde în limba română cu opțiuni specifice bucătăriei românești.
+''';
+
+      final content = [Content.text(prompt)];
+      final response = await _model.generateContent(content);
+
+      return response.text ?? 'Nu s-au putut genera sugestii';
+    } catch (e) {
+      throw Exception('Eroare la generarea sugestiilor: $e');
     }
   }
 }
