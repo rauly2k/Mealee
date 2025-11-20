@@ -122,7 +122,8 @@ class UserProvider with ChangeNotifier {
   }
 
   /// Calculate and update goals based on profile
-  Future<bool> calculateAndUpdateGoals(String goalType) async {
+  Future<bool> calculateAndUpdateGoals(String goalType,
+      {double? targetWeight}) async {
     try {
       if (_currentUser?.profile == null) {
         throw Exception('Profile not set');
@@ -162,6 +163,7 @@ class UserProvider with ChangeNotifier {
         proteinTarget: macros['protein']!,
         carbsTarget: macros['carbs']!,
         fatsTarget: macros['fats']!,
+        targetWeight: targetWeight,
       );
 
       return await updateGoals(goals);

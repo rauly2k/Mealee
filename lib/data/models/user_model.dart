@@ -148,6 +148,7 @@ class UserGoals extends Equatable {
   final double proteinTarget;
   final double carbsTarget;
   final double fatsTarget;
+  final double? targetWeight; // Optional target weight in kg
 
   const UserGoals({
     required this.goalType,
@@ -155,6 +156,7 @@ class UserGoals extends Equatable {
     required this.proteinTarget,
     required this.carbsTarget,
     required this.fatsTarget,
+    this.targetWeight,
   });
 
   factory UserGoals.fromMap(Map<String, dynamic> map) {
@@ -164,6 +166,9 @@ class UserGoals extends Equatable {
       proteinTarget: (map['proteinTarget'] ?? 150).toDouble(),
       carbsTarget: (map['carbsTarget'] ?? 200).toDouble(),
       fatsTarget: (map['fatsTarget'] ?? 65).toDouble(),
+      targetWeight: map['targetWeight'] != null
+          ? (map['targetWeight'] as num).toDouble()
+          : null,
     );
   }
 
@@ -174,6 +179,7 @@ class UserGoals extends Equatable {
       'proteinTarget': proteinTarget,
       'carbsTarget': carbsTarget,
       'fatsTarget': fatsTarget,
+      'targetWeight': targetWeight,
     };
   }
 
@@ -183,6 +189,7 @@ class UserGoals extends Equatable {
     double? proteinTarget,
     double? carbsTarget,
     double? fatsTarget,
+    double? targetWeight,
   }) {
     return UserGoals(
       goalType: goalType ?? this.goalType,
@@ -190,6 +197,7 @@ class UserGoals extends Equatable {
       proteinTarget: proteinTarget ?? this.proteinTarget,
       carbsTarget: carbsTarget ?? this.carbsTarget,
       fatsTarget: fatsTarget ?? this.fatsTarget,
+      targetWeight: targetWeight ?? this.targetWeight,
     );
   }
 
@@ -200,6 +208,7 @@ class UserGoals extends Equatable {
         proteinTarget,
         carbsTarget,
         fatsTarget,
+        targetWeight,
       ];
 }
 
@@ -207,11 +216,15 @@ class UserPreferences extends Equatable {
   final List<String> dietaryRestrictions;
   final List<String> allergies;
   final List<String> dislikedIngredients;
+  final String? dietType; // Diet type preference (classic, keto, vegan, etc.)
+  final List<String> preferredFoods; // Preferred foods list
 
   const UserPreferences({
     this.dietaryRestrictions = const [],
     this.allergies = const [],
     this.dislikedIngredients = const [],
+    this.dietType,
+    this.preferredFoods = const [],
   });
 
   factory UserPreferences.fromMap(Map<String, dynamic> map) {
@@ -221,6 +234,8 @@ class UserPreferences extends Equatable {
       allergies: List<String>.from(map['allergies'] ?? []),
       dislikedIngredients:
           List<String>.from(map['dislikedIngredients'] ?? []),
+      dietType: map['dietType'],
+      preferredFoods: List<String>.from(map['preferredFoods'] ?? []),
     );
   }
 
@@ -229,6 +244,8 @@ class UserPreferences extends Equatable {
       'dietaryRestrictions': dietaryRestrictions,
       'allergies': allergies,
       'dislikedIngredients': dislikedIngredients,
+      'dietType': dietType,
+      'preferredFoods': preferredFoods,
     };
   }
 
@@ -236,11 +253,15 @@ class UserPreferences extends Equatable {
     List<String>? dietaryRestrictions,
     List<String>? allergies,
     List<String>? dislikedIngredients,
+    String? dietType,
+    List<String>? preferredFoods,
   }) {
     return UserPreferences(
       dietaryRestrictions: dietaryRestrictions ?? this.dietaryRestrictions,
       allergies: allergies ?? this.allergies,
       dislikedIngredients: dislikedIngredients ?? this.dislikedIngredients,
+      dietType: dietType ?? this.dietType,
+      preferredFoods: preferredFoods ?? this.preferredFoods,
     );
   }
 
@@ -249,5 +270,7 @@ class UserPreferences extends Equatable {
         dietaryRestrictions,
         allergies,
         dislikedIngredients,
+        dietType,
+        preferredFoods,
       ];
 }
