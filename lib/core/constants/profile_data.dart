@@ -182,6 +182,247 @@ class ProfileData {
     'prefer_not_to_say': 'Prefer să nu spun',
   };
 
+  // ============== INGREDIENT KEYWORD MAPPING ==============
+
+  /// Maps food categories to Romanian ingredient keywords for matching
+  /// Used by IngredientMatcher for robust text matching
+  static const Map<String, List<String>> ingredientKeywordMap = {
+    // Proteins - Meat
+    'chicken': [
+      'pui',
+      'piept de pui',
+      'pulpe de pui',
+      'aripioare',
+      'carne de pui',
+    ],
+    'pork': [
+      'porc',
+      'carne de porc',
+      'cotlet',
+      'muschi',
+      'costita',
+      'costite',
+      'sunca',
+      'kaizer',
+    ],
+    'beef': [
+      'vita',
+      'carne de vita',
+      'muschi de vita',
+      'file',
+      'antricot',
+      'tocatura',
+    ],
+    'fish': [
+      'peste',
+      'crap',
+      'macrou',
+      'hering',
+      'ton',
+      'somon',
+      'pastrav',
+      'file de peste',
+    ],
+    'eggs': [
+      'oua',
+      'ou',
+      'ous',
+      'albus',
+      'galbenus',
+    ],
+    'beans': [
+      'fasole',
+      'naut',
+      'linte',
+      'mazare',
+      'bob',
+      'boabe',
+    ],
+
+    // Carbs
+    'potatoes': [
+      'cartofi',
+      'cartof',
+      'piure',
+      'cartofi prajiti',
+    ],
+    'rice': [
+      'orez',
+      'orez alb',
+      'orez brun',
+      'orez basmati',
+    ],
+    'pasta': [
+      'paste',
+      'macaroane',
+      'spaghete',
+      'penne',
+      'fusilli',
+      'tagliatelle',
+    ],
+    'bread': [
+      'paine',
+      'franzela',
+      'chifla',
+      'lipie',
+      'bagheta',
+      'pesmet',
+      'faina',
+    ],
+    'mamaliga': [
+      'mamaliga',
+      'malai',
+      'polenta',
+    ],
+
+    // Vegetables
+    'tomatoes': [
+      'rosii',
+      'rosie',
+      'tomate',
+      'bulion',
+      'pasta de tomate',
+    ],
+    'root_veg': [
+      'morcov',
+      'morcovi',
+      'telina',
+      'patrunjel',
+      'pastarnac',
+      'sfecla',
+    ],
+    'leafy_greens': [
+      'salata',
+      'spanac',
+      'rucola',
+      'patrunjel verde',
+      'marar',
+      'leurda',
+    ],
+    'cabbage': [
+      'varza',
+      'varza alba',
+      'varza rosie',
+      'varza de bruxelles',
+      'conopida',
+      'broccoli',
+    ],
+    'eggplant': [
+      'vinete',
+      'vanata',
+      'vinete',
+    ],
+    'mushrooms': [
+      'ciuperci',
+      'champignon',
+      'hribi',
+      'pleurotus',
+    ],
+
+    // Dairy
+    'cheese': [
+      'branza',
+      'telemea',
+      'cascaval',
+      'parmezan',
+      'mozzarella',
+      'brinza',
+      'urda',
+    ],
+    'yogurt': [
+      'iaurt',
+      'smantana',
+      'lapte batut',
+      'kefir',
+    ],
+
+    // Common allergens
+    'nuts': [
+      'nuci',
+      'migdale',
+      'alune',
+      'caju',
+      'fistic',
+      'arahide',
+    ],
+    'shellfish': [
+      'fructe de mare',
+      'creveti',
+      'midii',
+      'scoici',
+      'calmar',
+    ],
+    'soy': [
+      'soia',
+      'tofu',
+      'sos soia',
+      'lapte de soia',
+    ],
+    'wheat': [
+      'grau',
+      'faina',
+      'faina alba',
+      'gluten',
+    ],
+
+    // Additional common ingredients
+    'milk': [
+      'lapte',
+      'lapte de vaca',
+      'lapte integral',
+      'lapte degresat',
+    ],
+    'oil': [
+      'ulei',
+      'ulei de masline',
+      'ulei de floarea soarelui',
+      'ulei vegetal',
+    ],
+    'butter': [
+      'unt',
+      'margarina',
+    ],
+    'garlic': [
+      'usturoi',
+      'catei de usturoi',
+    ],
+    'onion': [
+      'ceapa',
+      'ceapa rosie',
+      'ceapa alba',
+      'praz',
+    ],
+    'pepper': [
+      'ardei',
+      'ardei gras',
+      'ardei iute',
+      'gogosar',
+      'kapia',
+    ],
+  };
+
+  /// Maps diet types to their Romanian labels (for easy access)
+  static const Map<String, String> dietTypeLabels = {
+    'classic': 'Clasic (Totul inclus)',
+    'high_protein': 'Hiperproteică',
+    'mediterranean': 'Mediteraneană',
+    'keto': 'Keto',
+    'low_carb': 'Low-Carb',
+    'vegetarian': 'Vegetarian',
+    'vegan': 'Vegan (De Post)',
+    'pescatarian': 'Pescatarian',
+    'paleo': 'Paleo',
+    'fasting': 'Mod Fasting',
+  };
+
+  /// Maps food categories to their Romanian labels
+  static const Map<String, String> foodCategoryLabels = {
+    'proteins': 'Proteine',
+    'carbs': 'Carbohidrați',
+    'vegetables': 'Legume & Verdețuri',
+    'dairy': 'Lactate',
+  };
+
   // ============== VALIDATION ==============
 
   /// Target weight limits (kg)

@@ -170,4 +170,116 @@ class RecipeRepository {
 
     return matchCount / required.length;
   }
+
+  /// Create a new recipe with automatic dietFlags and ingredientKeywords computation
+  Future<String> createRecipe(RecipeModel recipe) async {
+    try {
+      // Compute flags and keywords before saving
+      final recipeWithFlags = recipe.computeFlags();
+
+      // Add to Firestore
+      final docRef = await _firebaseService.recipesCollection.add(
+        recipeWithFlags.toFirestore(),
+      );
+
+      return docRef.id;
+    } catch (e) {
+      throw Exception('Eroare la crearea rețetei: $e');
+    }
+  }
+
+  /// Update an existing recipe with automatic dietFlags and ingredientKeywords recomputation
+  Future<void> updateRecipe(RecipeModel recipe) async {
+    try {
+      // Recompute flags and keywords before updating
+      final recipeWithFlags = recipe.computeFlags();
+
+      await _firebaseService.recipesCollection
+          .doc(recipe.recipeId)
+          .update(recipeWithFlags.toFirestore());
+    } catch (e) {
+      throw Exception('Eroare la actualizarea rețetei: $e');
+    }
+  }
+
+  /// Delete a recipe by ID
+  Future<void> deleteRecipe(String recipeId) async {
+    try {
+      await _firebaseService.recipesCollection.doc(recipeId).delete();
+    } catch (e) {
+      throw Exception('Eroare la ștergerea rețetei: $e');
+    }
+  }
+
+  /// Get recipes filtered by diet type
+  /// Uses the new dietFlags field for efficient filtering
+  Future<List<RecipeModel>> getRecipesByDietType(
+    String dietType, {
+    int limit = 50,
+  }) async {
+    try {
+      final snapshot = await _firebaseService.recipesCollection
+          .where('dietFlags', arrayContains: dietType)
+          .limit(limit)
+          .get();
+
+      return snapshot.docs
+          .map((doc) => RecipeModel.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      throw Exception('Eroare la încărcarea rețetelor: $e');
+    }
+  }
+
+  /// Get recipes that match multiple diet types (AND logic)
+  /// Recipe must have ALL specified diet flags
+  Future<List<RecipeModel>> getRecipesByMultipleDietTypes(
+    List<String> dietTypes, {
+    int limit = 50,
+  }) async {
+    try {
+      final snapshot = await _firebaseService.recipesCollection
+          .limit(limit * 2) // Fetch more to compensate for filtering
+          .get();
+
+      final recipes = snapshot.docs
+          .map((doc) => RecipeModel.fromFirestore(doc))
+          .where((recipe) {
+        // Check if recipe has all required diet flags
+        return dietTypes.every((diet) => recipe.dietFlags.contains(diet));
+      }).take(limit).toList();
+
+      return recipes;
+    } catch (e) {
+      throw Exception('Eroare la încărcarea rețetelor: $e');
+    }
+  }
+
+  /// Search recipes by ingredient keywords
+  /// Uses the new ingredientKeywords field for better search
+  Future<List<RecipeModel>> searchRecipesByKeywords(
+    List<String> keywords, {
+    int limit = 50,
+  }) async {
+    try {
+      // Firestore limitation: can only use arrayContainsAny with one keyword
+      // For multiple keywords, we fetch and filter client-side
+      final snapshot = await _firebaseService.recipesCollection
+          .limit(limit * 2)
+          .get();
+
+      final recipes = snapshot.docs
+          .map((doc) => RecipeModel.fromFirestore(doc))
+          .where((recipe) {
+        // Check if recipe contains any of the keywords
+        return keywords.any(
+          (keyword) => recipe.ingredientKeywords.contains(keyword.toLowerCase()),
+        );
+      }).take(limit).toList();
+
+      return recipes;
+    } catch (e) {
+      throw Exception('Eroare la căutarea rețetelor: $e');
+    }
+  }
 }
