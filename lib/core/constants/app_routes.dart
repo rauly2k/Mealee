@@ -17,6 +17,12 @@ class AppRoutes {
   static const String goalSelection = '/goal-selection';
   static const String dietaryPreferences = '/dietary-preferences';
 
+  // User Profiling (after registration)
+  static const String personalInfo = '/profiling/personal-info';
+  static const String activityLevel = '/profiling/activity-level';
+  static const String healthGoals = '/profiling/health-goals';
+  static const String profileComplete = '/profiling/complete';
+
   // Main app navigation
   static const String mainNav = '/main';
   static const String home = '/home';
