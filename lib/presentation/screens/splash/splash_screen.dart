@@ -5,7 +5,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../../data/services/local_storage_service.dart';
 import '../../providers/auth_provider.dart';
 import '../auth/login_screen.dart';
-import '../onboarding/welcome_screen.dart';
+import '../onboarding/onboarding_screen.dart';
 import '../main_navigation.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
     } else if (!isOnboardingCompleted) {
       // First time user - show onboarding
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+        MaterialPageRoute(builder: (_) => const OnboardingScreen()),
       );
     } else {
       // Returning user who is not logged in - show login

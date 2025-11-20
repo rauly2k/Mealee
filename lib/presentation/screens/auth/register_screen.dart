@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_strings.dart';
 import '../../../core/utils/validators.dart';
 import '../../providers/auth_provider.dart';
+import '../../widgets/auth/custom_auth_text_field.dart';
+import '../../widgets/auth/custom_auth_button.dart';
+import '../../widgets/auth/or_divider.dart';
+import '../../widgets/auth/social_login_buttons.dart';
 import '../main_navigation.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -45,7 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (success) {
           // Navigate to main app after successful registration
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Cont creat cu succes!')),
+            const SnackBar(content: Text('Account created successfully!')),
           );
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (_) => const MainNavigation()),
@@ -54,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(authProvider.errorMessage ?? 'Eroare la creare cont'),
+              content: Text(authProvider.errorMessage ?? 'Registration error'),
               backgroundColor: AppColors.error,
             ),
           );
@@ -63,149 +68,221 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+  Future<void> _handleGoogleSignIn() async {
+    final authProvider = context.read<AuthProvider>();
+
+    final success = await authProvider.signInWithGoogle();
+
+    if (mounted) {
+      if (success) {
+        // Navigate to main app
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const MainNavigation()),
+          (route) => false,
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                authProvider.errorMessage ?? 'Google sign-in error'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppStrings.register),
+    // Set status bar style
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
       ),
+    );
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 16),
-                // Title
-                Text(
-                  AppStrings.createAccount,
-                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                        fontWeight: FontWeight.bold,
+                const SizedBox(height: 67),
+
+                // Header Section
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Create Account',
+                      style: GoogleFonts.poppins(
+                        color: AppColors.textPrimary,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w600,
+                        height: 1.50,
                       ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Creează un cont nou pentru a începe',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.textSecondary,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Sign up to start your personalized meal journey.',
+                      style: GoogleFonts.dmSans(
+                        color: AppColors.textPrimary,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w400,
+                        height: 1.41,
                       ),
+                    ),
+                  ],
                 ),
+
                 const SizedBox(height: 32),
-                // Name field
-                TextFormField(
+
+                // Name Input Field
+                CustomAuthTextField(
                   controller: _nameController,
+                  hintText: 'Name',
                   textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(
-                    labelText: AppStrings.name,
-                    prefixIcon: Icon(Icons.person_outline),
-                  ),
                   validator: (value) => Validators.required(value,
-                      fieldName: 'Numele'),
+                      fieldName: 'Name'),
                 ),
-                const SizedBox(height: 16),
-                // Email field
-                TextFormField(
+
+                const SizedBox(height: 10),
+
+                // Email Input Field
+                CustomAuthTextField(
                   controller: _emailController,
+                  hintText: 'Email',
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: AppStrings.email,
-                    prefixIcon: Icon(Icons.email_outlined),
-                  ),
                   validator: Validators.email,
                 ),
-                const SizedBox(height: 16),
-                // Password field
-                TextFormField(
+
+                const SizedBox(height: 10),
+
+                // Password Input Field
+                CustomAuthTextField(
                   controller: _passwordController,
+                  hintText: 'Password',
                   obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    labelText: AppStrings.password,
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                    ),
-                  ),
                   validator: Validators.password,
-                ),
-                const SizedBox(height: 16),
-                // Confirm password field
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  obscureText: _obscureConfirmPassword,
-                  decoration: InputDecoration(
-                    labelText: AppStrings.confirmPassword,
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirmPassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureConfirmPassword = !_obscureConfirmPassword;
-                        });
-                      },
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      size: 24,
+                      color: AppColors.textPrimary,
                     ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
                   ),
+                ),
+
+                const SizedBox(height: 10),
+
+                // Confirm Password Input Field
+                CustomAuthTextField(
+                  controller: _confirmPasswordController,
+                  hintText: 'Confirm Password',
+                  obscureText: _obscureConfirmPassword,
                   validator: (value) => Validators.confirmPassword(
                     value,
                     _passwordController.text,
                   ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureConfirmPassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      size: 24,
+                      color: AppColors.textPrimary,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscureConfirmPassword = !_obscureConfirmPassword;
+                      });
+                    },
+                  ),
                 ),
-                const SizedBox(height: 32),
-                // Register button
-                Consumer<AuthProvider>(
-                  builder: (context, authProvider, _) {
-                    return SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed:
-                            authProvider.isLoading ? null : _handleRegister,
-                        child: authProvider.isLoading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppColors.textOnPrimary,
-                                  ),
-                                ),
-                              )
-                            : const Text(AppStrings.register),
+
+                const SizedBox(height: 51),
+
+                // "Or Continue With" Divider
+                const OrDivider(),
+
+                const SizedBox(height: 21),
+
+                // Social Login Buttons
+                SocialLoginButtons(
+                  onGooglePressed: _handleGoogleSignIn,
+                  onApplePressed: () {
+                    // TODO: Implement Apple Sign-In
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Apple sign-in coming soon'),
                       ),
                     );
                   },
                 ),
-                const SizedBox(height: 16),
-                // Login link
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      AppStrings.alreadyHaveAccount,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text(AppStrings.login),
-                    ),
-                  ],
+
+                const SizedBox(height: 40),
+
+                // Create Account Button
+                Consumer<AuthProvider>(
+                  builder: (context, authProvider, _) {
+                    return CustomAuthButton(
+                      text: 'Create Account',
+                      onPressed: _handleRegister,
+                      isLoading: authProvider.isLoading,
+                      type: AuthButtonType.primary,
+                    );
+                  },
                 ),
+
+                const SizedBox(height: 32),
+
+                // Footer Link - Navigate to Login
+                Center(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Already have an account? ',
+                            style: GoogleFonts.poppins(
+                              color: AppColors.textPrimary,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w400,
+                              height: 1.47,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'Log in!',
+                            style: GoogleFonts.poppins(
+                              color: AppColors.textPrimary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              height: 1.50,
+                            ),
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 40),
               ],
             ),
           ),
