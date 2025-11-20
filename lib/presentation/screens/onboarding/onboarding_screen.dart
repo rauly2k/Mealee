@@ -41,12 +41,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
-  void _onPageChanged(int page) {
-    setState(() {
-      _currentPage = page;
-    });
-  }
-
   void _nextPage() {
     if (_currentPage < _pages.length - 1) {
       _pageController.nextPage(
@@ -58,7 +52,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
   }
 
-  void _completeOnboarding() async {
+  void _skipToEnd() {
+    _completeOnboarding();
+  }
+
+  Future<void> _completeOnboarding() async {
     await LocalStorageService.instance.setOnboardingCompleted(true);
     if (mounted) {
       Navigator.of(context).pushReplacement(
@@ -77,155 +75,222 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
     );
 
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF7F2), // Warm cream background
+      backgroundColor: const Color(0xFFFFF7F2),
       body: Stack(
         children: [
-          // Image positioned at top: 111
+          // Orange curved top section
           Positioned(
-            left: 20,
-            top: 70,
+            top: 0,
+            left: 0,
+            right: 0,
+            child: CustomPaint(
+              size: Size(size.width, size.height * 0.7),
+              painter: CurvedTopPainter(
+                color: const Color(0xFFFA7315),
+              ),
+            ),
+          ),
+
+          // Phone mockup
+          Positioned(
+            top: size.height * 0.18,
+            left: 0,
+            right: 0,
             child: SizedBox(
-              width: screenWidth - 40, // 388 on 428px screen = screen - 40
-              height: screenHeight - 140, // 786 height
+              height: size.height * 0.65,
               child: PageView.builder(
                 controller: _pageController,
-                onPageChanged: _onPageChanged,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentPage = index;
+                  });
+                },
                 itemCount: _pages.length,
                 itemBuilder: (context, index) {
-                  return _OnboardingPage(data: _pages[index]);
+                  return Center(
+                    child: _buildPhoneMockup(_pages[index].imagePath, size),
+                  );
                 },
               ),
             ),
           ),
 
-          // Background overlay at top: 653
+          // Cream bottom overlay (covers bottom half of phone)
           Positioned(
+            bottom: 0,
             left: 0,
-            top: screenHeight - 330, // Increased height for background
-            child: Container(
-              width: screenWidth,
-              height: 330,
-              decoration: const BoxDecoration(color: Color(0xFFFFF7F2)),
+            right: 0,
+            child: CustomPaint(
+              size: Size(size.width, size.height * 0.43),
+              painter: CurvedBottomPainter(
+                color: const Color(0xFFFFF7F2),
+              ),
             ),
           ),
 
-          // Content (text + button) at top: 693
+          // Skip button
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8, right: 16),
+                child: TextButton(
+                  onPressed: _skipToEnd,
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xFF030401),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Skip',
+                        style: GoogleFonts.poppins(
+                          color: const Color(0xFF030401),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.arrow_forward,
+                        color: Color(0xFF030401),
+                        size: 18,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Bottom content (text and buttons)
           Positioned(
-            left: 20,
-            top: screenHeight - 290, // Moved content higher
-            child: SizedBox(
-              width: screenWidth - 40, // 388
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.fromLTRB(
+                24,
+                40,
+                24,
+                MediaQuery.of(context).padding.bottom + 16,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Page indicator dots
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      _pages.length,
-                      (index) => _buildDot(index),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Title and Description
-                  SizedBox(
-                    width: screenWidth - 40,
-                    child: Text(
-                      _pages[_currentPage].title,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        color: const Color(0xFF030401),
-                        fontSize: 28,
-                        fontWeight: FontWeight.w600,
-                        height: 1.50,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: screenWidth - 40,
-                    child: Text(
-                      _pages[_currentPage].description,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        color: const Color(0xFF030401),
-                        fontSize: 17,
-                        fontWeight: FontWeight.w400,
-                        height: 1.47,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Next button
-                  GestureDetector(
-                    onTap: _nextPage,
-                    child: Container(
-                      width: 124,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFA7315),
-                        borderRadius: BorderRadius.circular(80),
-                      ),
-                      child: Center(
-                        child: Text(
-                          _currentPage == _pages.length - 1 ? 'Start' : 'Next',
+                  // Text content with animation
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    transitionBuilder: (child, animation) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(0.3, 0),
+                            end: Offset.zero,
+                          ).animate(animation),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: Column(
+                      key: ValueKey<int>(_currentPage),
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Title
+                        Text(
+                          _pages[_currentPage].title,
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 18,
+                            color: const Color(0xFF030401),
+                            fontSize: 28,
                             fontWeight: FontWeight.w600,
                             height: 1.50,
                           ),
                         ),
+
+                        const SizedBox(height: 12),
+
+                        // Subtitle
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            _pages[_currentPage].description,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.poppins(
+                              color: const Color(0xFF030401),
+                              fontSize: 17,
+                              fontWeight: FontWeight.w400,
+                              height: 1.47,
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Page indicators
+                        _buildPageIndicators(),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // Next/Get Started button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: _nextPage,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFA7315),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        _currentPage == _pages.length - 1
+                            ? 'Get Started'
+                            : 'Next',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Login link
+                  TextButton(
+                    onPressed: () {
+                      // Navigate to login - you can update this to your login route
+                      _completeOnboarding();
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: const Color(0xFF030401),
+                    ),
+                    child: Text(
+                      'Already have an account? Log In',
+                      style: GoogleFonts.poppins(
+                        color: const Color(0xFF030401),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ),
                 ],
-              ),
-            ),
-          ),
-
-          // Skip button at top: 67
-          Positioned(
-            right: 20,
-            top: 67,
-            child: GestureDetector(
-              onTap: _completeOnboarding,
-              child: Text(
-                'Skip',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                  color: const Color(0xFF030401),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w400,
-                  height: 1.46,
-                ),
-              ),
-            ),
-          ),
-
-          // Bottom home indicator
-          Positioned(
-            left: 0,
-            bottom: 0,
-            child: Container(
-              width: screenWidth,
-              height: 34,
-              alignment: Alignment.center,
-              child: Container(
-                width: 134,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF030401),
-                  borderRadius: BorderRadius.circular(100),
-                ),
               ),
             ),
           ),
@@ -234,36 +299,36 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildDot(int index) {
-    return Container(
-      width: _currentPage == index ? 24 : 8,
-      height: 8,
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      decoration: BoxDecoration(
-        color: _currentPage == index
-            ? const Color(0xFFFA7315)
-            : const Color(0xFFD1D5DB),
-        borderRadius: BorderRadius.circular(4),
-      ),
+  Widget _buildPhoneMockup(String imagePath, Size screenSize) {
+    return Image.asset(
+      imagePath,
+      fit: BoxFit.contain,
+      errorBuilder: (context, error, stackTrace) {
+        return Icon(
+          Icons.restaurant_menu,
+          size: 200,
+          color: Colors.grey[400],
+        );
+      },
     );
   }
-}
 
-class _OnboardingPage extends StatelessWidget {
-  final OnboardingData data;
-
-  const _OnboardingPage({required this.data});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(data.imagePath),
-          fit: BoxFit.fill,
-          onError: (exception, stackTrace) {
-            // Error will show grey container instead
-          },
+  Widget _buildPageIndicators() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(
+        _pages.length,
+        (index) => AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          height: 8,
+          width: _currentPage == index ? 24 : 8,
+          decoration: BoxDecoration(
+            color: _currentPage == index
+                ? const Color(0xFFFA7315)
+                : const Color(0xFFFA7315).withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(4),
+          ),
         ),
       ),
     );
@@ -280,4 +345,73 @@ class OnboardingData {
     required this.description,
     required this.imagePath,
   });
+}
+
+/// Custom painter for curved orange top section
+class CurvedTopPainter extends CustomPainter {
+  final Color color;
+
+  CurvedTopPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    final path = Path();
+    path.moveTo(0, 0);
+    path.lineTo(0, size.height - 60);
+
+    // Create smooth downward curve
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height + 20,
+      size.width,
+      size.height - 60,
+    );
+
+    path.lineTo(size.width, 0);
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CurvedTopPainter oldDelegate) => color != oldDelegate.color;
+}
+
+/// Custom painter for curved cream bottom section
+class CurvedBottomPainter extends CustomPainter {
+  final Color color;
+
+  CurvedBottomPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    final path = Path();
+    path.moveTo(0, 0);
+
+    // Create downward curve (semicircle oriented downward)
+    path.quadraticBezierTo(
+      size.width / 2, // control point x (center)
+      60, // control point y (curves downward)
+      size.width, // end point x
+      0, // end point y
+    );
+
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CurvedBottomPainter oldDelegate) =>
+      color != oldDelegate.color;
 }
