@@ -200,3 +200,57 @@ class AppStrings {
   static const String premiumFeatures = 'Funcții Premium';
   static const String unlockPremium = 'Deblochează Premium';
 }
+
+/// Professional Romanian translations for onboarding flow
+class AppStringsRo {
+  // Page Titles
+  static const String personalInfoTitle = 'Informații Personale';
+  static const String activityLevelTitle = 'Nivel de Activitate';
+  static const String healthGoalsTitle = 'Obiective de Sănătate';
+
+  // Page 1 - Personal Info
+  static const String personalInfoSubtitle = 'Selectează datele tale pentru a ne ajuta să calculăm planul ideal.';
+  static const String labelAge = 'Vârstă';
+  static const String labelGender = 'Gen';
+  static const String genderMale = 'Masculin';
+  static const String genderFemale = 'Feminin';
+  static const String genderPreferNotToSay = 'Prefer să nu spun';
+  static const String labelWeight = 'Greutate (kg)';
+  static const String labelHeight = 'Înălțime (cm)';
+
+  // Page 2 - Activity
+  static const String activitySubtitle = 'Cât de activ ești într-o zi obișnuită?';
+  static const String sedentaryTitle = 'Sedentar';
+  static const String sedentaryDesc = 'Foarte puțin exercițiu (muncă de birou, zi sedentară)';
+  static const String lightActiveTitle = 'Ușor Activ';
+  static const String lightActiveDesc = 'Exerciții ușoare sau sport 1-3 zile pe săptămână (mers pe jos, grădinărit)';
+  static const String moderateActiveTitle = 'Moderat Activ';
+  static const String moderateActiveDesc = 'Exerciții moderate sau sport 3-5 zile pe săptămână (alergare, înot, ciclism)';
+  static const String veryActiveTitle = 'Foarte Activ';
+  static const String veryActiveDesc = 'Exerciții intense sau sport 6-7 zile pe săptămână';
+
+  // Page 3 - Goals & Preferences
+  static const String goalsSubtitle = 'Selectează obiectivele și preferințele alimentare.';
+
+  static const String sectionGoals = 'Obiective';
+  static const String goalWeightLoss = 'Slăbire';
+  static const String goalMaintenance = 'Menținere';
+  static const String goalMuscle = 'Masă Musculară';
+  static const String goalGeneralHealth = 'Sănătate Generală';
+
+  static const String sectionTargetWeight = 'Greutate Țintă';
+  static const String hintTargetWeight = 'Introdu greutatea dorită';
+
+  static const String sectionDiet = 'Tip Dietă';
+  static const String dietClassic = 'Clasic';
+  static const String dietLowCarb = 'Low Carb';
+  static const String dietKeto = 'Keto';
+  static const String dietVegan = 'Vegan';
+  static const String dietPaleo = 'Paleo';
+  static const String dietVegetarian = 'Vegetarian';
+
+  static const String sectionAllergies = 'Alergii & Intoleranțe';
+
+  static const String btnNext = 'Următorul';
+  static const String btnFinish = 'Finalizează';
+}
